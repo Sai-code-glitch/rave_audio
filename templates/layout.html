@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RAVE | Premium Sound Systems{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">RAVE</a></div>
+        <div class="nav-links">
+            <a href="/#collection">The Collection</a>
+            <a href="/book" class="cta-btn">Book Listening Session</a>
+        </div>
+    </nav>
+
+    <main class="page-transition-wrapper">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer style="padding: 40px 8%; background: #070708; border-top: 1px solid #1c1c1f; text-align: center; color: #555; font-size: 0.85rem; margin-top: 80px;">
+        <p>&copy; 2026 RAVE Audio Laboratories - Handcrafted by Ravi Velnati.</p>
+    </footer>
+</body>
+</html>
