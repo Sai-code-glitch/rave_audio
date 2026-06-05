@@ -1,32 +1,37 @@
 :root {
-    --bg-obsidian: #0a0a0b;
-    --card-dark: #121214;
-    --accent-amber: #d4af37;
+    --bg-obsidian: #050507;
+    --card-dark: #0d0d11;
     --text-pure: #ffffff;
-    --text-muted: #8e8e93;
+    --text-muted: #8a8a93;
+    --psy-neon-cyan: #00f0ff;
+    --psy-magenta: #ff007f;
+    --psy-deep-purple: #7000ff;
+    --psy-liquid-gold: #ffb700;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background-color: var(--bg-obsidian); color: var(--text-pure); font-family: 'Inter', sans-serif; }
-.navbar { display: flex; justify-content: space-between; padding: 30px 8%; align-items: center; position: sticky; top: 0; background: rgba(10,10,11,0.85); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid #1c1c1f; }
-.logo { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: 4px; }
-.nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.9rem; transition: color 0.3s; }
-.nav-links a:hover { color: #fff; }
-.cta-btn { border: 1px solid var(--text-pure); padding: 10px 20px; border-radius: 4px; color: var(--text-pure) !important; }
-.hero-section { height: 55vh; display: flex; align-items: center; padding: 0 8%; background: linear-gradient(180deg, rgba(10,10,11,0.2) 0%, rgba(10,10,11,1) 100%), #121214; }
-.brand-subtext { color: var(--accent-amber); letter-spacing: 6px; font-weight: bold; font-size: 0.85rem; }
-.hero-content h1 { font-family: 'Syne', sans-serif; font-size: 4rem; line-height: 1.1; margin-top: 15px; }
-.hero-description { color: var(--text-muted); max-width: 600px; margin-top: 15px; font-size: 1.1rem; }
-.showroom-section { padding: 80px 8%; }
-.section-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; text-align: center; margin-bottom: 60px; }
+html { scroll-behavior: smooth; }
+body { background-color: var(--bg-obsidian); color: var(--text-pure); font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+.logo { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-magenta), var(--psy-deep-purple), var(--psy-liquid-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: chromaticFluid 8s ease infinite; transition: transform 0.4s; cursor: pointer; display: inline-block; }
+.logo:hover { transform: scale(1.08) skewX(-4deg); letter-spacing: 8px; }
+@keyframes chromaticFluid { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.navbar { display: flex; justify-content: space-between; padding: 30px 8%; align-items: center; position: sticky; top: 0; background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
+.nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; transition: color 0.3s; }
+.nav-links a:hover { color: #fff; text-shadow: 0 0 10px var(--psy-neon-cyan); }
+.cta-btn { border: 1px solid #fff; padding: 10px 22px; border-radius: 50px; }
+.hero-section { height: 60vh; display: flex; align-items: center; padding: 0 8%; background: radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.07) 0%, transparent 40%), radial-gradient(circle at 10% 80%, rgba(255, 0, 127, 0.06) 0%, transparent 40%), var(--bg-obsidian); }
+.brand-subtext { color: var(--psy-liquid-gold); letter-spacing: 4px; font-weight: bold; font-size: 0.85rem; margin-bottom: 10px; }
+.hero-content h1 { font-family: 'Syne', sans-serif; font-size: 3.8rem; line-height: 1.1; margin-top: 10px; }
+.hero-description { color: rgba(255, 255, 255, 0.8); max-width: 600px; margin-top: 15px; font-size: 1.1rem; line-height: 1.6; }
+.showroom-section { padding: 80px 8%; background: radial-gradient(circle at 50% 0%, #0d0d14 0%, var(--bg-obsidian) 60%); }
+.section-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; text-align: center; margin-bottom: 50px; }
 .product-grid { display: flex; gap: 40px; }
-.product-card { background: var(--card-dark); border: 1px solid #1c1c1f; border-radius: 8px; flex: 1; overflow: hidden; transition: border-color 0.3s; }
-.product-card:hover { border-color: var(--accent-amber); }
-.product-image-placeholder { height: 260px; background: #17171a; display: flex; align-items: center; justify-content: center; color: #444; font-size: 0.85rem; letter-spacing: 2px; }
-.product-info { padding: 30px; }
-.product-info h3 { font-size: 1.6rem; }
-.tagline { color: var(--accent-amber); font-size: 0.95rem; margin: 8px 0 15px 0; }
-.specs { color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; }
-.card-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #1c1c1f; display: flex; justify-content: space-between; align-items: center; }
+.product-card { background: var(--card-dark); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 12px; flex: 1; overflow: hidden; transition: transform 0.4s, border-color 0.4s; }
+.product-card:hover { transform: translateY(-6px); border-color: var(--psy-neon-cyan); }
+.product-image-placeholder { height: 250px; background: #131317; display: flex; align-items: center; justify-content: center; color: #444; font-size: 0.85rem; letter-spacing: 2px; }
+.product-info { padding: 25px; }
+.product-info h3 { font-size: 1.6rem; font-family: 'Syne', sans-serif; }
+.tagline { color: var(--psy-liquid-gold); font-size: 0.9rem; margin: 5px 0 15px 0; font-weight: 600; }
+.specs { color: var(--text-muted); font-size: 0.85rem; }
+.card-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: space-between; align-items: center; }
 .price { font-weight: bold; font-size: 1.1rem; }
-.view-details { color: #fff; text-decoration: none; font-size: 0.9rem; border-bottom: 1px solid transparent; transition: border-color 0.3s; }
-.view-details:hover { border-color: #fff; }
+.view-details { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: color 0.3s; }
+.view-details:hover { color: var(--psy-magenta); }
