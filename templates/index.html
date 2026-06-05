@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <header class="hero-section">
-    <div class="video-background-wrapper">
+    <div class="video-background-wrapper" style="transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);">
         <video autoplay loop muted playsinline preload="auto" class="hero-bg-video ambient-idle-layer">
             <source src="{{ url_for('static', filename='videos/cymatic_loop.mp4') }}" type="video/mp4">
         </video>
@@ -77,6 +77,25 @@
                 </div>
             </div>
         </div>
+
+        <div class="hardware-tuning-rack" style="border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 20px;">
+            <div class="tuning-module">
+                <label class="tuning-label">ROOM CORRECTION (DSP BOUNDARY)</label>
+                <div class="phase-toggle-wrapper">
+                    <button id="roomFreeBtn" class="phase-btn active-phase">FREE-STANDING</button>
+                    <button id="roomBoundBtn" class="phase-btn">BOUNDARY</button>
+                    <button id="roomCornerBtn" class="phase-btn">CORNER-LOADED</button>
+                </div>
+            </div>
+
+            <div class="tuning-module">
+                <label class="tuning-label">DIRECTIVITY BEAMFORMING (WAVEGUIDE)</label>
+                <div class="phase-toggle-wrapper">
+                    <button id="beamWideBtn" class="phase-btn active-phase">LABORATORY WIDE</button>
+                    <button id="beamNarrowBtn" class="phase-btn">SPOTLIGHT NARROW</button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -130,6 +149,7 @@
     
     const ambientLayer = document.querySelector('.ambient-idle-layer');
     const immersionLayer = document.querySelector('.dynamic-immersion-layer');
+    const videoWrapper = document.querySelector('.video-background-wrapper');
 
     // REAL-TIME HARDWARE ELEMENT CAPTURES
     const hfSlider = document.getElementById('hfTrimSlider');
@@ -137,15 +157,19 @@
     const phase0Btn = document.getElementById('phase0Btn');
     const phase180Btn = document.getElementById('phase180Btn');
 
+    // NEW ELEMENT CAPTURES
+    const roomFreeBtn = document.getElementById('roomFreeBtn');
+    const roomBoundBtn = document.getElementById('roomBoundBtn');
+    const roomCornerBtn = document.getElementById('roomCornerBtn');
+    const beamWideBtn = document.getElementById('beamWideBtn');
+    const beamNarrowBtn = document.getElementById('beamNarrowBtn');
+
     // HARDWARE FUNCTION 1: HIGH-FREQUENCY COMPENSATOR
     hfSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value).toFixed(1);
         hfDisplay.innerText = val > 0 ? `+${val} dB` : `${val} dB`;
-        
-        // Scale the graphic text glow and sharpness based on HF air levels
         const glowRadius = 10 + (val * 8);
         const opacityStrength = 0.7 + (val * 0.1);
-        
         if(maskedText) {
             maskedText.style.filter = `drop-shadow(0 0 ${glowRadius}px var(--psy-neon-cyan))`;
             maskedText.style.opacity = opacityStrength;
@@ -158,11 +182,45 @@
         phase180Btn.classList.remove('active-phase');
         document.body.classList.remove('phase-inverted-active');
     });
-
     phase180Btn.addEventListener('click', () => {
         phase180Btn.classList.add('active-phase');
         phase0Btn.classList.remove('active-phase');
         document.body.classList.add('phase-inverted-active');
+    });
+
+    // HARDWARE FUNCTION 3: ROOM CORRECTION MATRIX
+    roomFreeBtn.addEventListener('click', () => {
+        clearRoomClasses();
+        roomFreeBtn.classList.add('active-phase');
+    });
+    roomBoundBtn.addEventListener('click', () => {
+        clearRoomClasses();
+        roomBoundBtn.classList.add('active-phase');
+        document.body.classList.add('dsp-boundary-active');
+    });
+    roomCornerBtn.addEventListener('click', () => {
+        clearRoomClasses();
+        roomCornerBtn.classList.add('active-phase');
+        document.body.classList.add('dsp-corner-active');
+    });
+
+    function clearRoomClasses() {
+        roomFreeBtn.classList.remove('active-phase');
+        roomBoundBtn.classList.remove('active-phase');
+        roomCornerBtn.classList.remove('active-phase');
+        document.body.classList.remove('dsp-boundary-active', 'dsp-corner-active');
+    }
+
+    // HARDWARE FUNCTION 4: BEAMFORMING DISPERSION
+    beamWideBtn.addEventListener('click', () => {
+        beamWideBtn.classList.add('active-phase');
+        beamNarrowBtn.classList.remove('active-phase');
+        if(videoWrapper) videoWrapper.style.transform = "scale(1.0)";
+    });
+    beamNarrowBtn.addEventListener('click', () => {
+        beamNarrowBtn.classList.add('active-phase');
+        beamWideBtn.classList.remove('active-phase');
+        if(videoWrapper) videoWrapper.style.transform = "scaleX(0.35) scaleY(1.0)";
     });
 
     function triggerAudioVisualState(isPlaying) {
@@ -191,13 +249,10 @@
         track.addEventListener('click', function() {
             document.querySelectorAll('.track-node').forEach(t => t.classList.remove('active-track'));
             this.classList.add('active-track');
-            
             const filename = this.getAttribute('data-filename');
             const trackName = this.innerText.replace('→ ', '');
-            
             audioPlayer.src = `/static/audio/${filename}`;
             trackTitle.innerText = trackName;
-            
             audioPlayer.play();
             triggerAudioVisualState(true);
         });
@@ -209,7 +264,6 @@
             triggerAudioVisualState(true);
         }
     });
-
     document.getElementById('pauseBtn').addEventListener('click', () => {
         audioPlayer.pause();
         triggerAudioVisualState(false);
