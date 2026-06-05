@@ -1,12 +1,18 @@
 {% extends 'layout.html' %}
-{% block title %}RAVE | Acoustic Illusion by Ravi Velnati{% endblock %}
-
 {% block content %}
 <header class="hero-section">
+    <div class="wave-container">
+        <div class="wave-bar bar-1"></div><div class="wave-bar bar-2"></div><div class="wave-bar bar-3"></div>
+        <div class="wave-bar bar-4"></div><div class="wave-bar bar-5"></div><div class="wave-bar bar-6"></div>
+    </div>
     <div class="hero-content">
         <p class="brand-subtext">THE RAVI VELNATI AUDIO LABS</p>
         <h1 class="resonance-header">ACOUSTIC ILLUSION.<br><span class="chromatic-text">DISSOLVING REALITY.</span></h1>
         <p class="hero-description">Enter a state of total soundwave immersion. RAVE engineering configurations align phase coordinates to manipulate spatial perception, creating pristine physical soundscapes out of thin air.</p>
+        <div class="gain-control-wrapper">
+            <label for="gainSlider">LABORATORY CALIBRATION: <span id="gainDisplay">0.0</span> dB</label>
+            <input type="range" id="gainSlider" min="-12" max="12" step="0.1" value="0">
+        </div>
     </div>
 </header>
 
@@ -17,7 +23,8 @@
         <div class="product-card">
             <div class="product-image-placeholder">
                 <div class="laser-sweep"></div>
-                <span>FREQUENCY CORE ACTIVE</span>
+                <div class="hardware-stamp">CORE COHERENCY SECURE</div>
+                <span>FREQUENCY NODE ACTIVE</span>
             </div>
             <div class="product-info">
                 <h3>{{ product.name }}</h3>
@@ -25,11 +32,24 @@
                 <p class="specs">{{ product.frequency_specs }}</p>
                 <div class="card-footer">
                     <span class="price">{{ product.price }}</span>
-                    <a href="/product/{{ product.id }}" class="view-details">Explore Engineering &rarr;</a>
+                    <a href="/product/{{ product.id }}" class="view-details schematics-btn">[ ACCESS SCHEMATICS ]</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </section>
+
+<script>
+    const slider = document.getElementById('gainSlider');
+    const display = document.getElementById('gainDisplay');
+    const blobOne = document.querySelector('.blob-one');
+    slider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value).toFixed(1);
+        display.innerText = val > 0 ? `+${val}` : val;
+        const scaleFactor = 1 + (val / 24);
+        blobOne.style.transform = `scale(${scaleFactor})`;
+        blobOne.style.opacity = 0.12 + (val / 100);
+    });
+</script>
 {% endblock %}

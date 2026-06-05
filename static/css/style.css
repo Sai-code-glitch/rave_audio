@@ -1,129 +1,59 @@
 :root {
-    --bg-obsidian: #040406;
-    --card-dark: rgba(13, 13, 18, 0.4);
+    --bg-obsidian: #030305;
+    --card-dark: rgba(11, 11, 15, 0.4);
     --text-pure: #ffffff;
-    --text-muted: #868690;
-    
-    /* Iridescent Energy Wave Core Colors */
+    --text-muted: #787882;
     --psy-neon-cyan: #00f0ff;
     --psy-magenta: #ff007f;
-    --psy-deep-purple: #6200ff;
+    --psy-deep-purple: #5800ff;
     --psy-liquid-gold: #ffaa00;
 }
-
-html { 
-    scroll-behavior: smooth; 
-    background-color: var(--bg-obsidian);
-}
-
-body { 
-    background-color: var(--bg-obsidian); 
-    color: var(--text-pure); 
-    font-family: 'Inter', sans-serif; 
-    margin: 0; padding: 0; 
-    overflow-x: hidden; 
-}
-
-/* ADVANCEMENT 1: IMMERSIVE BACKGROUND FREQUENCY BLOBS */
-.acoustic-blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(140px);
-    z-index: 1;
-    opacity: 0.12;
-    pointer-events: none;
-    transition: all 0.5s ease;
-}
-.blob-one {
-    width: 500px; height: 500px;
-    background: var(--psy-deep-purple);
-    top: -10%; right: -5%;
-    animation: subBassPulse 12s ease-in-out infinite alternate;
-}
-.blob-two {
-    width: 600px; height: 600px;
-    background: var(--psy-magenta);
-    bottom: -15%; left: -10%;
-    animation: subBassPulse 18s ease-in-out infinite alternate-reverse;
-}
-@keyframes subBassPulse {
-    0% { transform: scale(1) translate(0px, 0px); filter: blur(140px); }
-    50% { transform: scale(1.2) translate(40px, -30px); filter: blur(170px); opacity: 0.16; }
-    100% { transform: scale(0.9) translate(-20px, 50px); filter: blur(120px); }
-}
-
-/* UNIFIED GLASSMORPHIC NAVBAR */
-.navbar { 
-    display: flex; 
-    justify-content: space-between; 
-    padding: 30px 8%; 
-    align-items: center; 
-    position: sticky; top: 0; 
-    background: rgba(4, 4, 6, 0.7); 
-    backdrop-filter: blur(25px); 
-    -webkit-backdrop-filter: blur(25px); 
-    z-index: 100; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
-}
-
-.logo { 
-    font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; 
-    background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-magenta), var(--psy-deep-purple), var(--psy-liquid-gold)); 
-    background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-    animation: chromaticFluid 8s ease infinite; transition: transform 0.4s; cursor: pointer; display: inline-block; 
-}
-.logo:hover { transform: scale(1.08) skewX(-4deg); letter-spacing: 7px; }
+html { scroll-behavior: smooth; background-color: var(--bg-obsidian); }
+body { background-color: var(--bg-obsidian); color: var(--text-pure); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+.acoustic-blob { position: fixed; border-radius: 50%; filter: blur(140px); z-index: 1; opacity: 0.12; pointer-events: none; transition: transform 0.2s ease, opacity 0.2s ease; }
+.blob-one { width: 500px; height: 500px; background: var(--psy-deep-purple); top: -5%; right: -5%; }
+.blob-two { width: 600px; height: 600px; background: var(--psy-magenta); bottom: -10%; left: -10%; animation: floatBack 20s infinite alternate; }
+@keyframes floatBack { 0% { transform: translate(0,0); } 100% { transform: translate(30px, 40px); } }
+.navbar { display: flex; justify-content: space-between; padding: 30px 8%; align-items: center; position: sticky; top: 0; background: rgba(3,3,5,0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.logo { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-magenta), var(--psy-deep-purple), var(--psy-liquid-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: chromaticFluid 8s ease infinite; transition: transform 0.4s; cursor: pointer; }
+.logo:hover { transform: scale(1.08) skewX(-4deg); }
 @keyframes chromaticFluid { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
 .nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s; }
-.nav-links a:hover { color: #fff; text-shadow: 0 0 12px var(--psy-neon-cyan); }
-.cta-btn { border: 1px solid rgba(255,255,255,0.4); padding: 10px 24px; border-radius: 50px; background: rgba(255,255,255,0.02); backdrop-filter: blur(5px); }
-.cta-btn:hover { background: linear-gradient(45deg, var(--psy-magenta), var(--psy-deep-purple)); border-color: transparent; box-shadow: 0 0 20px rgba(255,0,127,0.3); transform: translateY(-2px); }
-
-/* HERO SETUP WITH RADIAL TRANSPARENCY SHIFTING */
+.nav-links a:hover { color: #fff; text-shadow: 0 0 10px var(--psy-neon-cyan); }
+.cta-btn { border: 1px solid rgba(255,255,255,0.3); padding: 10px 24px; border-radius: 50px; display: inline-block; transition: background 0.3s, box-shadow 0.3s; }
+.wave-container { position: absolute; right: 8%; width: 400px; height: 200px; display: flex; align-items: center; justify-content: space-between; opacity: 0.25; pointer-events: none; }
+.wave-bar { width: 12px; border-radius: 20px; background: linear-gradient(180deg, var(--psy-neon-cyan), var(--psy-deep-purple)); animation: audioOscillation 1.5s ease-in-out infinite alternate; }
+.bar-1 { height: 30%; animation-delay: 0.1s; } .bar-2 { height: 80%; animation-delay: 0.4s; } .bar-3 { height: 50%; animation-delay: 0.2s; }
+.bar-4 { height: 95%; animation-delay: 0.6s; } .bar-5 { height: 40%; animation-delay: 0.3s; } .bar-6 { height: 70%; animation-delay: 0.5s; }
+@keyframes audioOscillation { 0% { transform: scaleY(0.4); opacity: 0.5; } 100% { transform: scaleY(1.1); opacity: 1; } }
 .hero-section { height: 65vh; display: flex; align-items: center; padding: 0 8%; position: relative; z-index: 5; }
-
-/* ADVANCEMENT 2: KINETIC ACOUSTIC RESONANCE HEADERS */
-.resonance-header { font-family: 'Syne', sans-serif; font-size: 4.5rem; font-weight: 800; line-height: 1.05; letter-spacing: -2px; transition: transform 0.3s ease; }
-.resonance-header:hover { transform: scale(1.01) rotateX(2deg); }
-.chromatic-text { color: transparent; background: linear-gradient(90deg, var(--psy-magenta), var(--psy-neon-cyan), var(--psy-liquid-gold)); -webkit-background-clip: text; animation: waveDistort 6s linear infinite; background-size: 200% auto; }
-@keyframes waveDistort { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-
+.resonance-header { font-family: 'Syne', sans-serif; font-size: 4.5rem; font-weight: 800; line-height: 1.05; letter-spacing: -2px; }
+.chromatic-text { color: transparent; background: linear-gradient(90deg, var(--psy-magenta), var(--psy-neon-cyan), var(--psy-liquid-gold)); -webkit-background-clip: text; background-size: 200% auto; animation: textWave 6s linear infinite; }
+@keyframes textWave { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 .brand-subtext { color: var(--psy-liquid-gold); letter-spacing: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 12px; }
-.hero-description { color: rgba(255, 255, 255, 0.75); max-width: 650px; margin-top: 20px; font-size: 1.15rem; line-height: 1.7; }
-
-/* ADVANCEMENT 3 & 4: HOLOGRAPHIC HETERODYNE CONSOLE CARDS */
+.hero-description { color: rgba(255, 255, 255, 0.7); max-width: 600px; margin-top: 20px; font-size: 1.1rem; line-height: 1.6; }
+.gain-control-wrapper { margin-top: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; max-width: 380px; backdrop-filter: blur(5px); }
+.gain-control-wrapper label { display: block; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 12px; }
+#gainSlider { -webkit-appearance: none; width: 100%; background: #15151c; height: 4px; border-radius: 2px; outline: none; }
+#gainSlider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--psy-neon-cyan); cursor: pointer; transition: transform 0.2s; }
+#gainSlider::-webkit-slider-thumb:hover { transform: scale(1.3); box-shadow: 0 0 10px var(--psy-neon-cyan); }
 .showroom-section { padding: 100px 8%; position: relative; z-index: 5; }
-.section-title { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 60px; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 60px; }
 .product-grid { display: flex; gap: 40px; }
-
-.product-card { 
-    background: var(--card-dark); 
-    border: 1px solid rgba(255, 255, 255, 0.04); 
-    border-radius: 20px; flex: 1; overflow: hidden; 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); 
-}
-.product-card:hover { 
-    transform: translateY(-10px) scale(1.02); 
-    border-color: rgba(0, 240, 255, 0.4); 
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,240,255,0.1); 
-}
-
-.product-image-placeholder { height: 260px; background: rgba(10,10,15,0.6); display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; letter-spacing: 3px; position: relative; overflow: hidden; }
+.product-card { background: var(--card-dark); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 20px; flex: 1; overflow: hidden; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); }
+.product-card:hover { transform: translateY(-10px); border-color: rgba(0, 240, 255, 0.4); box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,240,255,0.1); }
+.product-image-placeholder { height: 260px; background: rgba(8,8,12,0.7); display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; letter-spacing: 3px; position: relative; overflow: hidden; }
 .laser-sweep { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,0,127,0.15), transparent); transform: skewX(-25deg); animation: dynamicLaser 7s infinite linear; }
 @keyframes dynamicLaser { 0% { left: -100%; } 30% { left: 150%; } 100% { left: 150%; } }
-
+.hardware-stamp { position: absolute; top: 15px; left: 15px; background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.2); padding: 5px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; color: var(--psy-neon-cyan); letter-spacing: 1px; }
 .product-info { padding: 35px; }
 .product-info h3 { font-size: 1.8rem; font-family: 'Syne', sans-serif; font-weight: 800; }
 .tagline { color: var(--psy-liquid-gold); font-size: 0.95rem; margin: 6px 0 15px 0; font-weight: 600; }
 .specs { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
 .card-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: space-between; align-items: center; }
 .price { font-weight: bold; font-size: 1.2rem; }
-.view-details { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: all 0.3s; }
-.view-details:hover { color: var(--psy-magenta); transform: translateX(5px); }
-
-/* HOLOGRAPHIC INTAKE MATRIX FORM */
+.schematics-btn { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; font-family: 'Syne', sans-serif; transition: all 0.3s; position: relative; }
+.schematics-btn:hover { color: #fff; text-shadow: 0 0 10px var(--psy-neon-cyan); transform: translateX(3px); }
 .glass-form { background: rgba(13, 13, 18, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 50px; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; }
 .form-group { margin-bottom: 25px; }
 .form-group label { display: block; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }

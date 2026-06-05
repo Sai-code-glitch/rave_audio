@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}RAVE | Acoustic Illusion{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=ACOUSTIC_ILLUSION_v2">
+    <title>{% block title %}RAVE | Alpha Laboratory{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=ALPHA_STAGE_v3">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -15,16 +15,33 @@
         <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">RAVE</a></div>
         <div class="nav-links">
             <a href="/#collection">The Collection</a>
-            <a href="/book" class="cta-btn">Book Audition</a>
+            <a href="/book" class="cta-btn magnetic-target">Book Audition</a>
         </div>
     </nav>
 
-    <main class="page-transition-wrapper">
+    <main>
         {% block content %}{% endblock %}
     </main>
 
-    <footer style="padding: 60px 8%; background: rgba(5,5,7,0.8); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #444; font-size: 0.85rem; margin-top: 80px; position: relative; z-index: 5;">
+    <footer style="padding: 40px 8%; background: rgba(5,5,7,0.9); border-top: 1px solid rgba(255,255,255,0.02); text-align: center; color: #333; font-size: 0.8rem; margin-top: 80px; position: relative; z-index: 5;">
         <p>&copy; 2026 RAVE Audio Laboratories - Handcrafted by Ravi Velnati Systems.</p>
     </footer>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const targets = document.querySelectorAll('.magnetic-target');
+            targets.forEach(target => {
+                const rect = target.getBoundingClientRect();
+                const x = e.clientX - (rect.left + rect.width/2);
+                const y = e.clientY - (rect.top + rect.height/2);
+                const distance = Math.sqrt(x*x + y*y);
+                if (distance < 100) {
+                    target.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                } else {
+                    target.style.transform = 'translate(0px, 0px)';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
