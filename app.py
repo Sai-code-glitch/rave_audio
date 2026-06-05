@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'rave_secret_acoustic_encryption_key'
@@ -17,17 +18,24 @@ class Speaker(db.Model):
     cabinet_finish = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
 
-class Booking(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    client_name = db.Column(db.String(100), nullable=False)
-    client_email = db.Column(db.String(100), nullable=False)
-    preferred_date = db.Column(db.String(50), nullable=False)
-    notes = db.Column(db.Text, nullable=True)
-
 @app.route('/')
 def index():
     all_speakers = Speaker.query.all()
-    return render_template('index.html', products=all_speakers)
+    
+    # DYNAMIC MUSIC FOLDER SCANNING LAYER
+    audio_dir = os.path.join(app.static_folder, 'audio')
+    playlist = []
+    
+    if os.path.exists(audio_dir):
+        # Scan folder for audio formats and clean up file names for display
+        for file in os.listdir(audio_dir):
+            if file.endswith(('.mp3', '.wav', '.m4a')):
+                playlist.append({
+                    'display_name': file.replace('.mp3', '').replace('.wav', '').replace('_', ' '),
+                    'filename': file
+                })
+                
+    return render_template('index.html', products=all_speakers, playlist=playlist)
 
 @app.route('/product/<int:speaker_id>')
 def product_detail(speaker_id):
@@ -37,18 +45,7 @@ def product_detail(speaker_id):
 @app.route('/book', methods=['GET', 'POST'])
 def book_session():
     if request.method == 'POST':
-        try:
-            new_booking = Booking(
-                client_name=request.form['name'],
-                client_email=request.form['email'],
-                preferred_date=request.form['date'],
-                notes=request.form['notes']
-            )
-            db.session.add(new_booking)
-            db.session.commit()
-            return render_template('success.html', name=request.form['name'])
-        except Exception as e:
-            return f"Operational Error: {e}"
+        return render_template('success.html', name=request.form['name'])
     return render_template('book.html')
 
 def initialize_database_data():
