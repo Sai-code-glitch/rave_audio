@@ -27,13 +27,11 @@ body { background-color: var(--bg-obsidian); color: var(--text-pure); font-famil
 .wave-bar { width: 12px; border-radius: 20px; background: linear-gradient(180deg, var(--psy-neon-cyan), var(--psy-deep-purple)); animation: audioOscillation 1.5s ease-in-out infinite alternate; animation-play-state: paused; }
 @keyframes audioOscillation { 0% { transform: scaleY(0.4); opacity: 0.5; } 100% { transform: scaleY(1.1); opacity: 1; } }
 
-/* PHASE REVERSAL MODIFIERS */
-body.phase-inverted-active .wave-bar { animation: audioOscillationInverted 1.5s ease-in-out infinite alternate; }
-body.phase-inverted-active .video-masked-text { animation: textShiftReversed 6s linear infinite; }
+.shapes-inverted-active .wave-bar { animation: audioOscillationInverted 1.5s ease-in-out infinite alternate; }
+.phase-inverted-active .video-masked-text { animation: textShiftReversed 6s linear infinite; }
 @keyframes audioOscillationInverted { 0% { transform: scaleY(1.1); opacity: 1; } 100% { transform: scaleY(0.4); opacity: 0.5; } }
 @keyframes textShiftReversed { 0% { background-position: 200% center; } 100% { background-position: 0% center; } }
 
-/* DSP ROOM MATRIX VISUAL REFLECTION STYLES */
 body.dsp-boundary-active .hero-bg-video { filter: saturate(140%) contrast(110%) blur(4px); }
 body.dsp-corner-active .hero-bg-video { filter: saturate(180%) contrast(135%) blur(12px); }
 
@@ -65,7 +63,6 @@ body.dsp-corner-active .hero-bg-video { filter: saturate(180%) contrast(135%) bl
 .track-node:hover .track-arrow { opacity: 1; transform: translateX(0); }
 .active-track { background: rgba(0, 240, 255, 0.03) !important; border-color: rgba(0, 240, 255, 0.15) !important; color: var(--psy-neon-cyan) !important; font-weight: bold; }
 
-/* HARDWARE TUNING RACK MODULAR SLOTS */
 .hardware-tuning-rack { width: 100%; display: flex; gap: 40px; padding-top: 5px; }
 .tuning-module { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .tuning-label { font-size: 0.65rem; font-weight: bold; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
@@ -77,6 +74,24 @@ body.dsp-corner-active .hero-bg-video { filter: saturate(180%) contrast(135%) bl
 .phase-btn { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 8px 16px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px; }
 .phase-btn:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
 .active-phase { background: rgba(0, 240, 255, 0.04) !important; border-color: var(--psy-neon-cyan) !important; color: var(--psy-neon-cyan) !important; text-shadow: 0 0 8px rgba(0,240,255,0.3); }
+
+/* HIGH-END X-RAY BLUEPRINT VECTOR GRID STYLING */
+.xray-schematic-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(2, 2, 6, 0.96);
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.08) 1px, transparent 1px);
+    background-size: 20px 20px; background-position: center;
+    opacity: 0; transform: scale(1.08);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 3;
+}
+.xray-schematic-overlay::before {
+    content: ''; position: absolute; top: 12%; left: 12%; width: 76%; height: 76%;
+    border: 1px dashed rgba(255, 0, 127, 0.3); border-radius: 4px;
+}
+.product-card:hover .xray-schematic-overlay { opacity: 1; transform: scale(1); }
+.product-card:hover .placeholder-text-node { opacity: 0; }
 
 .showroom-section { padding: 100px 8%; position: relative; z-index: 5; }
 .section-title { font-family: 'Syne', sans-serif; font-size: 2.8rem; font-weight: 800; text-align: center; margin-bottom: 60px; }

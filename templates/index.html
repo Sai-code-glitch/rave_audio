@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <header class="hero-section">
-    <div class="video-background-wrapper" style="transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);">
+    <div class="video-background-wrapper" style="transition: transform 0.1s linear;">
         <video autoplay loop muted playsinline preload="auto" class="hero-bg-video ambient-idle-layer">
             <source src="{{ url_for('static', filename='videos/cymatic_loop.mp4') }}" type="video/mp4">
         </video>
@@ -16,7 +16,7 @@
         <div class="wave-bar bar-4"></div><div class="wave-bar bar-5"></div><div class="wave-bar bar-6"></div>
     </div>
 
-    <div class="hero-content" style="position: relative; z-index: 10;">
+    <div class="hero-content" style="position: relative; z-index: 10; transition: transform 0.1s linear;">
         <p class="brand-subtext">THE RAVI VELNATI AUDIO LABS</p>
         <h1 class="resonance-header">ACOUSTIC ILLUSION.<br><span class="video-masked-text">DISSOLVING REALITY.</span></h1>
         <p class="hero-description">Enter a state of total soundwave immersion. RAVE engineering configurations align phase coordinates to manipulate spatial perception, creating pristine physical soundscapes out of thin air.</p>
@@ -36,7 +36,7 @@
             <div class="console-now-playing">
                 <span class="status-indicator">SYSTEM IDLE</span>
                 <h4 id="trackTitle">No Track Selected</h4>
-                <audio id="globalAudioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
+                <audio id="globalAudioPlayer" crossOrigin="anonymous" style="display: none;"></audio>
                 
                 <div class="custom-audio-controls">
                     <button id="playBtn" class="control-node">PLAY</button>
@@ -89,11 +89,12 @@
             </div>
 
             <div class="tuning-module">
-                <label class="tuning-label">DIRECTIVITY BEAMFORMING (WAVEGUIDE)</label>
+                <label class="tuning-label">3D SPATIAL ORBIT FIELD</label>
                 <div class="phase-toggle-wrapper">
-                    <button id="beamWideBtn" class="phase-btn active-phase">LABORATORY WIDE</button>
-                    <button id="beamNarrowBtn" class="phase-btn">SPOTLIGHT NARROW</button>
+                    <button id="spatialOffBtn" class="phase-btn active-phase">STEREO FLAT</button>
+                    <button id="spatialOnBtn" class="phase-btn">360° HYPNOTIC ORBIT</button>
                 </div>
+                <span id="spatialVectorDisplay" style="font-size: 0.65rem; color: var(--text-muted); font-family: monospace; margin-top: 5px;">Acoustic Coordinates: X: 0.00, Z: -1.00</span>
             </div>
         </div>
     </div>
@@ -108,6 +109,9 @@
                 <video loop muted playsinline class="card-hover-video">
                     <source src="{{ url_for('static', filename='videos/oscilloscope.mp4') }}" type="video/mp4">
                 </video>
+                
+                <div class="xray-schematic-overlay"></div>
+                
                 <div class="laser-sweep"></div>
                 <div class="hardware-stamp">CORE COHERENCY SECURE</div>
                 <span class="placeholder-text-node">FREQUENCY NODE ACTIVE</span>
@@ -130,169 +134,131 @@
     const slider = document.getElementById('gainSlider');
     const display = document.getElementById('gainDisplay');
     const blobOne = document.querySelector('.blob-one');
-    slider.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value).toFixed(1);
-        display.innerText = val > 0 ? `+${val}` : val;
-        const scaleFactor = 1 + (val / 24);
-        if(blobOne) {
-            blobOne.style.transform = `scale(${scaleFactor})`;
-            blobOne.style.opacity = 0.12 + (val / 100);
-        }
-    });
-
-    // MASTER MEDIA PLAYER MATRIX HOOKS
+    
     const audioPlayer = document.getElementById('globalAudioPlayer');
     const trackTitle = document.getElementById('trackTitle');
     const statusIndicator = document.querySelector('.status-indicator');
     const waveBars = document.querySelectorAll('.wave-bar');
     const maskedText = document.querySelector('.video-masked-text');
-    
     const ambientLayer = document.querySelector('.ambient-idle-layer');
     const immersionLayer = document.querySelector('.dynamic-immersion-layer');
     const videoWrapper = document.querySelector('.video-background-wrapper');
+    const heroContent = document.querySelector('.hero-content');
 
-    // REAL-TIME HARDWARE ELEMENT CAPTURES
     const hfSlider = document.getElementById('hfTrimSlider');
     const hfDisplay = document.getElementById('hfTrimDisplay');
     const phase0Btn = document.getElementById('phase0Btn');
     const phase180Btn = document.getElementById('phase180Btn');
-
-    // NEW ELEMENT CAPTURES
     const roomFreeBtn = document.getElementById('roomFreeBtn');
     const roomBoundBtn = document.getElementById('roomBoundBtn');
     const roomCornerBtn = document.getElementById('roomCornerBtn');
-    const beamWideBtn = document.getElementById('beamWideBtn');
-    const beamNarrowBtn = document.getElementById('beamNarrowBtn');
+    
+    const spatialOffBtn = document.getElementById('spatialOffBtn');
+    const spatialOnBtn = document.getElementById('spatialOnBtn');
+    const spatialVectorDisplay = document.getElementById('spatialVectorDisplay');
 
-    // HARDWARE FUNCTION 1: HIGH-FREQUENCY COMPENSATOR
-    hfSlider.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value).toFixed(1);
-        hfDisplay.innerText = val > 0 ? `+${val} dB` : `${val} dB`;
-        const glowRadius = 10 + (val * 8);
-        const opacityStrength = 0.7 + (val * 0.1);
-        if(maskedText) {
-            maskedText.style.filter = `drop-shadow(0 0 ${glowRadius}px var(--psy-neon-cyan))`;
-            maskedText.style.opacity = opacityStrength;
-        }
-    });
+    let audioContext = null; let trackSource = null; let analyserNode = null; let pannerNode = null; let gainNode = null;
+    let spatialActive = false; let orbitTheta = 0;
 
-    // HARDWARE FUNCTION 2: TIME-DOMAIN PHASE MATRIX SWAP
-    phase0Btn.addEventListener('click', () => {
-        phase0Btn.classList.add('active-phase');
-        phase180Btn.classList.remove('active-phase');
-        document.body.classList.remove('phase-inverted-active');
-    });
-    phase180Btn.addEventListener('click', () => {
-        phase180Btn.classList.add('active-phase');
-        phase0Btn.classList.remove('active-phase');
-        document.body.classList.add('phase-inverted-active');
-    });
+    function initializeWebAudioAPI() {
+        if (audioContext) return; 
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        trackSource = audioContext.createMediaElementSource(audioPlayer);
+        analyserNode = audioContext.createAnalyser();
+        pannerNode = audioContext.createPanner();
+        gainNode = audioContext.createGain();
 
-    // HARDWARE FUNCTION 3: ROOM CORRECTION MATRIX
-    roomFreeBtn.addEventListener('click', () => {
-        clearRoomClasses();
-        roomFreeBtn.classList.add('active-phase');
-    });
-    roomBoundBtn.addEventListener('click', () => {
-        clearRoomClasses();
-        roomBoundBtn.classList.add('active-phase');
-        document.body.classList.add('dsp-boundary-active');
-    });
-    roomCornerBtn.addEventListener('click', () => {
-        clearRoomClasses();
-        roomCornerBtn.classList.add('active-phase');
-        document.body.classList.add('dsp-corner-active');
-    });
+        pannerNode.panningModel = 'HRTF';
+        pannerNode.distanceModel = 'inverse';
+        analyserNode.fftSize = 64;
 
-    function clearRoomClasses() {
-        roomFreeBtn.classList.remove('active-phase');
-        roomBoundBtn.classList.remove('active-phase');
-        roomCornerBtn.classList.remove('active-phase');
-        document.body.classList.remove('dsp-boundary-active', 'dsp-corner-active');
+        trackSource.connect(analyserNode);
+        analyserNode.connect(pannerNode);
+        pannerNode.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        runBassKineticShaker(); runSpatialOrbitLoop();
     }
 
-    // HARDWARE FUNCTION 4: BEAMFORMING DISPERSION
-    beamWideBtn.addEventListener('click', () => {
-        beamWideBtn.classList.add('active-phase');
-        beamNarrowBtn.classList.remove('active-phase');
-        if(videoWrapper) videoWrapper.style.transform = "scale(1.0)";
-    });
-    beamNarrowBtn.addEventListener('click', () => {
-        beamNarrowBtn.classList.add('active-phase');
-        beamWideBtn.classList.remove('active-phase');
-        if(videoWrapper) videoWrapper.style.transform = "scaleX(0.35) scaleY(1.0)";
-    });
+    function runBassKineticShaker() {
+        const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+        function parseFrame() {
+            requestAnimationFrame(parseFrame);
+            if (!audioPlayer.paused) {
+                analyserNode.getByteFrequencyData(dataArray);
+                let bassEnergy = (dataArray[0] + dataArray[1] + dataArray[2]) / 3;
+                let normalizedBass = bassEnergy / 255;
+                if (normalizedBass > 0.3) {
+                    let scaleValue = 1 + (normalizedBass * 0.015);
+                    let blurFactor = normalizedBass * 25;
+                    if (videoWrapper) videoWrapper.style.transform = `scale(${scaleValue})`;
+                    if (heroContent) heroContent.style.transform = `scale(${1 / scaleValue})`;
+                    if (maskedText) maskedText.style.filter = `drop-shadow(0 0 ${blurFactor}px var(--psy-magenta))`;
+                } else {
+                    if (videoWrapper && !spatialActive) videoWrapper.style.transform = "scale(1)";
+                    if (heroContent) heroContent.style.transform = "scale(1)";
+                }
+            }
+        }
+        parseFrame();
+    }
+
+    function runSpatialOrbitLoop() {
+        function updateOrbit() {
+            requestAnimationFrame(updateOrbit);
+            if (spatialActive && !audioPlayer.paused) {
+                orbitTheta += 0.02;
+                let x = Math.sin(orbitTheta) * 4; let z = Math.cos(orbitTheta) * 4;
+                if (pannerNode) {
+                    pannerNode.positionX.setValueAtTime(x, audioContext.currentTime);
+                    pannerNode.positionZ.setValueAtTime(z, audioContext.currentTime);
+                }
+                spatialVectorDisplay.innerText = `Acoustic Coordinates: X: ${x.toFixed(2)}, Z: ${z.toFixed(2)}`;
+                if(videoWrapper) videoWrapper.style.transform = `translateX(${x * 8}px) scale(1.05)`;
+            }
+        }
+        updateOrbit();
+    }
+
+    spatialOnBtn.addEventListener('click', () => { initializeWebAudioAPI(); spatialActive = true; spatialOnBtn.classList.add('active-phase'); spatialOffBtn.classList.remove('active-phase'); });
+    spatialOffBtn.addEventListener('click', () => { spatialActive = false; spatialOffBtn.classList.add('active-phase'); spatialOnBtn.classList.remove('active-phase'); if(pannerNode) { pannerNode.positionX.setValueAtTime(0, audioContext.currentTime); pannerNode.positionZ.setValueAtTime(-1, audioContext.currentTime); } spatialVectorDisplay.innerText = "Acoustic Coordinates: X: 0.00, Z: -1.00"; });
+    slider.addEventListener('input', (e) => { const val = parseFloat(e.target.value).toFixed(1); display.innerText = val > 0 ? `+${val}` : val; if(gainNode) gainNode.gain.value = Math.pow(10, val / 20); if(blobOne) blobOne.style.transform = `scale(${1 + (val / 24)})`; });
+    hfSlider.addEventListener('input', (e) => { const val = parseFloat(e.target.value).toFixed(1); hfDisplay.innerText = val > 0 ? `+${val} dB` : `${val} dB`; if(maskedText) maskedText.style.filter = `drop-shadow(0 0 ${10 + (val * 8)}px var(--psy-neon-cyan))`; });
+    phase0Btn.addEventListener('click', () => { phase0Btn.classList.add('active-phase'); phase180Btn.classList.remove('active-phase'); document.body.classList.remove('phase-inverted-active'); });
+    phase180Btn.addEventListener('click', () => { phase180Btn.classList.add('active-phase'); phase0Btn.classList.remove('active-phase'); document.body.classList.add('phase-inverted-active'); });
+    roomFreeBtn.addEventListener('click', () => { clearRoomClasses(); roomFreeBtn.classList.add('active-phase'); });
+    roomBoundBtn.addEventListener('click', () => { clearRoomClasses(); roomBoundBtn.classList.add('active-phase'); document.body.classList.add('dsp-boundary-active'); });
+    roomCornerBtn.addEventListener('click', () => { clearRoomClasses(); roomCornerBtn.classList.add('active-phase'); document.body.classList.add('dsp-corner-active'); });
+    function clearRoomClasses() { roomFreeBtn.classList.remove('active-phase'); roomBoundBtn.classList.remove('active-phase'); roomCornerBtn.classList.remove('active-phase'); document.body.classList.remove('dsp-boundary-active', 'dsp-corner-active'); }
 
     function triggerAudioVisualState(isPlaying) {
         if (isPlaying) {
-            statusIndicator.innerText = "STREAMING REFERENCE CORES";
-            statusIndicator.style.borderColor = "var(--psy-neon-cyan)";
-            statusIndicator.style.color = "var(--psy-neon-cyan)";
-            if (immersionLayer) {
-                immersionLayer.style.opacity = "1.0"; 
-                if (ambientLayer) ambientLayer.style.opacity = "0.0";
-            }
+            initializeWebAudioAPI(); if (audioContext && audioContext.state === 'suspended') audioContext.resume();
+            statusIndicator.innerText = "STREAMING REFERENCE CORES"; statusIndicator.style.borderColor = "var(--psy-neon-cyan)"; statusIndicator.style.color = "var(--psy-neon-cyan)";
+            if (immersionLayer) { immersionLayer.style.opacity = "1.0"; if (ambientLayer) ambientLayer.style.opacity = "0.0"; }
             toggleWaveAnimation(true);
         } else {
-            statusIndicator.innerText = "STREAM PAUSED";
-            statusIndicator.style.borderColor = "var(--text-muted)";
-            statusIndicator.style.color = "var(--text-muted)";
-            if (immersionLayer) {
-                immersionLayer.style.opacity = "0";
-                if (ambientLayer) ambientLayer.style.opacity = "0.15";
-            }
+            statusIndicator.innerText = "STREAM PAUSED"; statusIndicator.style.borderColor = "var(--text-muted)"; statusIndicator.style.color = "var(--text-muted)";
+            if (immersionLayer) { immersionLayer.style.opacity = "0"; if (ambientLayer) ambientLayer.style.opacity = "0.15"; }
             toggleWaveAnimation(false);
         }
     }
 
     document.querySelectorAll('#playlistTrackList .track-node:not(.empty-notice)').forEach(track => {
         track.addEventListener('click', function() {
-            document.querySelectorAll('.track-node').forEach(t => t.classList.remove('active-track'));
-            this.classList.add('active-track');
-            const filename = this.getAttribute('data-filename');
-            const trackName = this.innerText.replace('→ ', '');
-            audioPlayer.src = `/static/audio/${filename}`;
-            trackTitle.innerText = trackName;
-            audioPlayer.play();
-            triggerAudioVisualState(true);
+            document.querySelectorAll('.track-node').forEach(t => t.classList.remove('active-track')); this.classList.add('active-track');
+            const filename = this.getAttribute('data-filename'); trackTitle.innerText = this.innerText.replace('→ ', '');
+            audioPlayer.src = `/static/audio/${filename}`; audioPlayer.play(); triggerAudioVisualState(true);
         });
     });
-
-    document.getElementById('playBtn').addEventListener('click', () => {
-        if(audioPlayer.src) {
-            audioPlayer.play();
-            triggerAudioVisualState(true);
-        }
-    });
-    document.getElementById('pauseBtn').addEventListener('click', () => {
-        audioPlayer.pause();
-        triggerAudioVisualState(false);
-    });
-
-    function toggleWaveAnimation(active) {
-        waveBars.forEach(bar => {
-            bar.style.animationPlayState = active ? 'running' : 'paused';
-        });
-    }
+    document.getElementById('playBtn').addEventListener('click', () => { if(audioPlayer.src) { audioPlayer.play(); triggerAudioVisualState(true); } });
+    document.getElementById('pauseBtn').addEventListener('click', () => { audioPlayer.pause(); triggerAudioVisualState(false); });
+    function toggleWaveAnimation(active) { waveBars.forEach(bar => { bar.style.animationPlayState = active ? 'running' : 'paused'; }); }
 
     document.querySelectorAll('.product-card').forEach(card => {
-        const video = card.querySelector('.card-hover-video');
-        const textNode = card.querySelector('.placeholder-text-node');
-        card.addEventListener('mouseenter', () => {
-            if(video) {
-                video.play();
-                video.style.opacity = "0.4";
-                if(textNode) textNode.style.opacity = "0.1";
-            }
-        });
-        card.addEventListener('mouseleave', () => {
-            if(video) {
-                video.pause();
-                video.currentTime = 0;
-                video.style.opacity = "0";
-                if(textNode) textNode.style.opacity = "1";
-            }
-        });
+        const video = card.querySelector('.card-hover-video'); const textNode = card.querySelector('.placeholder-text-node');
+        card.addEventListener('mouseenter', () => { if(video) { video.play(); video.style.opacity = "0.4"; if(textNode) textNode.style.opacity = "0.1"; } });
+        card.addEventListener('mouseleave', () => { if(video) { video.pause(); video.currentTime = 0; video.style.opacity = "0"; if(textNode) textNode.style.opacity = "1"; } });
     });
 </script>
 {% endblock %}
