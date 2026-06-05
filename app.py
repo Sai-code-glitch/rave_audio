@@ -21,8 +21,6 @@ class Speaker(db.Model):
 @app.route('/')
 def index():
     all_speakers = Speaker.query.all()
-    
-    # DYNAMIC MUSIC FOLDER SCANNING LAYER
     audio_dir = os.path.join(app.static_folder, 'audio')
     playlist = []
     

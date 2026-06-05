@@ -5,11 +5,9 @@
         <video autoplay loop muted playsinline preload="auto" class="hero-bg-video ambient-idle-layer">
             <source src="{{ url_for('static', filename='videos/cymatic_loop.mp4') }}" type="video/mp4">
         </video>
-        
         <video autoplay loop muted playsinline preload="auto" class="hero-bg-video dynamic-immersion-layer" style="opacity: 0; transition: opacity 0.8s ease-in-out;">
             <source src="{{ url_for('static', filename='videos/sound_immersion.mp4') }}" type="video/mp4">
         </video>
-        
         <div class="video-overlay-tint"></div>
     </div>
 
@@ -32,31 +30,52 @@
 
 <section class="showroom-section" style="padding-top: 40px; padding-bottom: 40px;">
     <h2 class="section-title" style="margin-bottom: 30px;">Acoustic Reference Console</h2>
-    <div class="audio-console-container">
-        <div class="console-now-playing">
-            <span class="status-indicator">SYSTEM IDLE</span>
-            <h4 id="trackTitle">No Track Selected</h4>
-            <audio id="globalAudioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
+    
+    <div class="audio-console-container" style="flex-direction: column; gap: 25px;">
+        <div style="display: flex; gap: 40px; width: 100%;">
+            <div class="console-now-playing">
+                <span class="status-indicator">SYSTEM IDLE</span>
+                <h4 id="trackTitle">No Track Selected</h4>
+                <audio id="globalAudioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
+                
+                <div class="custom-audio-controls">
+                    <button id="playBtn" class="control-node">PLAY</button>
+                    <button id="pauseBtn" class="control-node">PAUSE</button>
+                </div>
+            </div>
             
-            <div class="custom-audio-controls">
-                <button id="playBtn" class="control-node">PLAY</button>
-                <button id="pauseBtn" class="control-node">PAUSE</button>
+            <div class="console-playlist">
+                <h5>INDEXED LABORATORY WAV ARCHIVES</h5>
+                <ul id="playlistTrackList">
+                    {% if playlist %}
+                        {% for track in playlist %}
+                        <li class="track-node" data-filename="{{ track.filename }}">
+                            <span class="track-arrow">&rarr;</span> {{ track.display_name }}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="track-node empty-notice" style="opacity: 0.4;">No reference signals detected in static/audio/</li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
         
-        <div class="console-playlist">
-            <h5>INDEXED LABORATORY WAV ARCHIVES</h5>
-            <ul id="playlistTrackList">
-                {% if playlist %}
-                    {% for track in playlist %}
-                    <li class="track-node" data-filename="{{ track.filename }}">
-                        <span class="track-arrow">&rarr;</span> {{ track.display_name }}
-                    </li>
-                    {% endfor %}
-                {% else %}
-                    <li class="track-node empty-notice" style="opacity: 0.4;">No reference signals detected in static/audio/</li>
-                {% endif %}
-            </ul>
+        <div class="hardware-tuning-rack">
+            <div class="tuning-module">
+                <label class="tuning-label">HF ATTENUATOR (AIR CUT)</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="range" id="hfTrimSlider" min="-3" max="3" step="0.1" value="0" class="tuning-slider">
+                    <span id="hfTrimDisplay" class="tuning-readout">0.0 dB</span>
+                </div>
+            </div>
+            
+            <div class="tuning-module">
+                <label class="tuning-label">CRITICAL PHASE MATRIX</label>
+                <div class="phase-toggle-wrapper">
+                    <button id="phase0Btn" class="phase-btn active-phase">0° STANDARD</button>
+                    <button id="phase180Btn" class="phase-btn">180° INVERTED</button>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -102,23 +121,55 @@
         }
     });
 
-    // MASTER PLATFORM MEDIA PLAYER LOGIC
+    // MASTER MEDIA PLAYER MATRIX HOOKS
     const audioPlayer = document.getElementById('globalAudioPlayer');
     const trackTitle = document.getElementById('trackTitle');
     const statusIndicator = document.querySelector('.status-indicator');
     const waveBars = document.querySelectorAll('.wave-bar');
+    const maskedText = document.querySelector('.video-masked-text');
     
-    // BACKDROP GRAPHIC SELECTION MAPS
     const ambientLayer = document.querySelector('.ambient-idle-layer');
     const immersionLayer = document.querySelector('.dynamic-immersion-layer');
+
+    // REAL-TIME HARDWARE ELEMENT CAPTURES
+    const hfSlider = document.getElementById('hfTrimSlider');
+    const hfDisplay = document.getElementById('hfTrimDisplay');
+    const phase0Btn = document.getElementById('phase0Btn');
+    const phase180Btn = document.getElementById('phase180Btn');
+
+    // HARDWARE FUNCTION 1: HIGH-FREQUENCY COMPENSATOR
+    hfSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value).toFixed(1);
+        hfDisplay.innerText = val > 0 ? `+${val} dB` : `${val} dB`;
+        
+        // Scale the graphic text glow and sharpness based on HF air levels
+        const glowRadius = 10 + (val * 8);
+        const opacityStrength = 0.7 + (val * 0.1);
+        
+        if(maskedText) {
+            maskedText.style.filter = `drop-shadow(0 0 ${glowRadius}px var(--psy-neon-cyan))`;
+            maskedText.style.opacity = opacityStrength;
+        }
+    });
+
+    // HARDWARE FUNCTION 2: TIME-DOMAIN PHASE MATRIX SWAP
+    phase0Btn.addEventListener('click', () => {
+        phase0Btn.classList.add('active-phase');
+        phase180Btn.classList.remove('active-phase');
+        document.body.classList.remove('phase-inverted-active');
+    });
+
+    phase180Btn.addEventListener('click', () => {
+        phase180Btn.classList.add('active-phase');
+        phase0Btn.classList.remove('active-phase');
+        document.body.classList.add('phase-inverted-active');
+    });
 
     function triggerAudioVisualState(isPlaying) {
         if (isPlaying) {
             statusIndicator.innerText = "STREAMING REFERENCE CORES";
             statusIndicator.style.borderColor = "var(--psy-neon-cyan)";
             statusIndicator.style.color = "var(--psy-neon-cyan)";
-            
-            // ADVANCEMENT: FORCE 100% VISIBILITY AND STOP AMBIENT VIDEO ON PLAY STATE
             if (immersionLayer) {
                 immersionLayer.style.opacity = "1.0"; 
                 if (ambientLayer) ambientLayer.style.opacity = "0.0";
@@ -128,8 +179,6 @@
             statusIndicator.innerText = "STREAM PAUSED";
             statusIndicator.style.borderColor = "var(--text-muted)";
             statusIndicator.style.color = "var(--text-muted)";
-            
-            // RETURN BACKGROUND ENGINE TO IDLE CYMATICS
             if (immersionLayer) {
                 immersionLayer.style.opacity = "0";
                 if (ambientLayer) ambientLayer.style.opacity = "0.15";
