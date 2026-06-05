@@ -21,8 +21,8 @@ body { background-color: var(--bg-obsidian); color: var(--text-pure); font-famil
 .cta-btn { border: 1px solid rgba(255,255,255,0.3); padding: 10px 24px; border-radius: 50px; display: inline-block; }
 .hero-section { height: 65vh; display: flex; align-items: center; padding: 0 8%; position: relative; overflow: hidden; }
 .video-background-wrapper { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 1; pointer-events: none; }
-.hero-bg-video { width: 100%; height: 100%; object-fit: cover; opacity: 0.15; }
-.video-overlay-tint { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(180deg, transparent 60%, var(--bg-obsidian) 100%); }
+.hero-bg-video { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; }
+.video-overlay-tint { position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(180deg, transparent 60%, var(--bg-obsidian) 100%); z-index: 2; }
 .wave-container { position: absolute; right: 8%; width: 400px; height: 200px; display: flex; align-items: center; justify-content: space-between; opacity: 0.25; pointer-events: none; z-index: 5; }
 .wave-bar { width: 12px; border-radius: 20px; background: linear-gradient(180deg, var(--psy-neon-cyan), var(--psy-deep-purple)); animation: audioOscillation 1.5s ease-in-out infinite alternate; animation-play-state: paused; }
 @keyframes audioOscillation { 0% { transform: scaleY(0.4); opacity: 0.5; } 100% { transform: scaleY(1.1); opacity: 1; } }
@@ -36,7 +36,7 @@ body { background-color: var(--bg-obsidian); color: var(--text-pure); font-famil
 #gainSlider { -webkit-appearance: none; width: 100%; background: #121216; height: 4px; outline: none; }
 #gainSlider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--psy-neon-cyan); cursor: pointer; }
 
-/* DYNAMIC INTERACTIVE CONSOLE PLAYER ELEMENT DESIGN */
+/* RECTIFIER CONSOLE ELEMENT DESIGN */
 .audio-console-container { display: flex; gap: 40px; background: rgba(10, 10, 14, 0.5); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 30px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: relative; z-index: 10; }
 .console-now-playing { flex: 1.2; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid rgba(255, 255, 255, 0.04); padding-right: 40px; }
 .status-indicator { align-self: flex-start; font-size: 0.65rem; font-weight: bold; border: 1px solid var(--text-muted); padding: 4px 10px; border-radius: 4px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 15px; transition: all 0.3s ease; }

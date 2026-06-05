@@ -2,9 +2,14 @@
 {% block content %}
 <header class="hero-section">
     <div class="video-background-wrapper">
-        <video autoplay loop muted playsinline class="hero-bg-video">
+        <video autoplay loop muted playsinline preload="auto" class="hero-bg-video ambient-idle-layer">
             <source src="{{ url_for('static', filename='videos/cymatic_loop.mp4') }}" type="video/mp4">
         </video>
+        
+        <video autoplay loop muted playsinline preload="auto" class="hero-bg-video dynamic-immersion-layer" style="opacity: 0; transition: opacity 0.8s ease-in-out;">
+            <source src="{{ url_for('static', filename='videos/sound_immersion.mp4') }}" type="video/mp4">
+        </video>
+        
         <div class="video-overlay-tint"></div>
     </div>
 
@@ -25,7 +30,6 @@
     </div>
 </header>
 
-<!-- NEW SECTION: ALPHA RECTIFIER AUDIO LAB MATRIX PLAYER -->
 <section class="showroom-section" style="padding-top: 40px; padding-bottom: 40px;">
     <h2 class="section-title" style="margin-bottom: 30px;">Acoustic Reference Console</h2>
     <div class="audio-console-container">
@@ -34,7 +38,6 @@
             <h4 id="trackTitle">No Track Selected</h4>
             <audio id="globalAudioPlayer" controls style="width: 100%; margin-top: 15px; display: none;"></audio>
             
-            <!-- Custom UI Controls -->
             <div class="custom-audio-controls">
                 <button id="playBtn" class="control-node">PLAY</button>
                 <button id="pauseBtn" class="control-node">PAUSE</button>
@@ -85,7 +88,6 @@
     </div>
 </section>
 
-<!-- RUNTIME AUDIO CONSOLE CONTROL LAYER JS -->
 <script>
     const slider = document.getElementById('gainSlider');
     const display = document.getElementById('gainDisplay');
@@ -94,8 +96,10 @@
         const val = parseFloat(e.target.value).toFixed(1);
         display.innerText = val > 0 ? `+${val}` : val;
         const scaleFactor = 1 + (val / 24);
-        blobOne.style.transform = `scale(${scaleFactor})`;
-        blobOne.style.opacity = 0.12 + (val / 100);
+        if(blobOne) {
+            blobOne.style.transform = `scale(${scaleFactor})`;
+            blobOne.style.opacity = 0.12 + (val / 100);
+        }
     });
 
     // MASTER PLATFORM MEDIA PLAYER LOGIC
@@ -103,40 +107,63 @@
     const trackTitle = document.getElementById('trackTitle');
     const statusIndicator = document.querySelector('.status-indicator');
     const waveBars = document.querySelectorAll('.wave-bar');
+    
+    // BACKDROP GRAPHIC SELECTION MAPS
+    const ambientLayer = document.querySelector('.ambient-idle-layer');
+    const immersionLayer = document.querySelector('.dynamic-immersion-layer');
+
+    function triggerAudioVisualState(isPlaying) {
+        if (isPlaying) {
+            statusIndicator.innerText = "STREAMING REFERENCE CORES";
+            statusIndicator.style.borderColor = "var(--psy-neon-cyan)";
+            statusIndicator.style.color = "var(--psy-neon-cyan)";
+            
+            // ADVANCEMENT: FORCE 100% VISIBILITY AND STOP AMBIENT VIDEO ON PLAY STATE
+            if (immersionLayer) {
+                immersionLayer.style.opacity = "1.0"; 
+                if (ambientLayer) ambientLayer.style.opacity = "0.0";
+            }
+            toggleWaveAnimation(true);
+        } else {
+            statusIndicator.innerText = "STREAM PAUSED";
+            statusIndicator.style.borderColor = "var(--text-muted)";
+            statusIndicator.style.color = "var(--text-muted)";
+            
+            // RETURN BACKGROUND ENGINE TO IDLE CYMATICS
+            if (immersionLayer) {
+                immersionLayer.style.opacity = "0";
+                if (ambientLayer) ambientLayer.style.opacity = "0.15";
+            }
+            toggleWaveAnimation(false);
+        }
+    }
 
     document.querySelectorAll('#playlistTrackList .track-node:not(.empty-notice)').forEach(track => {
         track.addEventListener('click', function() {
-            // Manage visual selection
             document.querySelectorAll('.track-node').forEach(t => t.classList.remove('active-track'));
             this.classList.add('active-track');
             
             const filename = this.getAttribute('data-filename');
             const trackName = this.innerText.replace('→ ', '');
             
-            // Source routing map injection
             audioPlayer.src = `/static/audio/${filename}`;
             trackTitle.innerText = trackName;
-            statusIndicator.innerText = "STREAMING REFERENCE CORES";
-            statusIndicator.style.borderColor = "var(--psy-neon-cyan)";
-            statusIndicator.style.color = "var(--psy-neon-cyan)";
             
             audioPlayer.play();
-            toggleWaveAnimation(true);
+            triggerAudioVisualState(true);
         });
     });
 
     document.getElementById('playBtn').addEventListener('click', () => {
         if(audioPlayer.src) {
             audioPlayer.play();
-            statusIndicator.innerText = "STREAMING REFERENCE CORES";
-            toggleWaveAnimation(true);
+            triggerAudioVisualState(true);
         }
     });
 
     document.getElementById('pauseBtn').addEventListener('click', () => {
         audioPlayer.pause();
-        statusIndicator.innerText = "STREAM PAUSED";
-        toggleWaveAnimation(false);
+        triggerAudioVisualState(false);
     });
 
     function toggleWaveAnimation(active) {
@@ -145,7 +172,6 @@
         });
     }
 
-    // Video interactions handler
     document.querySelectorAll('.product-card').forEach(card => {
         const video = card.querySelector('.card-hover-video');
         const textNode = card.querySelector('.placeholder-text-node');

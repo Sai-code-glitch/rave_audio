@@ -27,7 +27,6 @@ def index():
     playlist = []
     
     if os.path.exists(audio_dir):
-        # Scan folder for audio formats and clean up file names for display
         for file in os.listdir(audio_dir):
             if file.endswith(('.mp3', '.wav', '.m4a')):
                 playlist.append({
