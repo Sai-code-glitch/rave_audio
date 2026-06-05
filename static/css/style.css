@@ -1,37 +1,133 @@
 :root {
-    --bg-obsidian: #050507;
-    --card-dark: #0d0d11;
+    --bg-obsidian: #040406;
+    --card-dark: rgba(13, 13, 18, 0.4);
     --text-pure: #ffffff;
-    --text-muted: #8a8a93;
+    --text-muted: #868690;
+    
+    /* Iridescent Energy Wave Core Colors */
     --psy-neon-cyan: #00f0ff;
     --psy-magenta: #ff007f;
-    --psy-deep-purple: #7000ff;
-    --psy-liquid-gold: #ffb700;
+    --psy-deep-purple: #6200ff;
+    --psy-liquid-gold: #ffaa00;
 }
-html { scroll-behavior: smooth; }
-body { background-color: var(--bg-obsidian); color: var(--text-pure); font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-.logo { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-magenta), var(--psy-deep-purple), var(--psy-liquid-gold)); background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: chromaticFluid 8s ease infinite; transition: transform 0.4s; cursor: pointer; display: inline-block; }
-.logo:hover { transform: scale(1.08) skewX(-4deg); letter-spacing: 8px; }
+
+html { 
+    scroll-behavior: smooth; 
+    background-color: var(--bg-obsidian);
+}
+
+body { 
+    background-color: var(--bg-obsidian); 
+    color: var(--text-pure); 
+    font-family: 'Inter', sans-serif; 
+    margin: 0; padding: 0; 
+    overflow-x: hidden; 
+}
+
+/* ADVANCEMENT 1: IMMERSIVE BACKGROUND FREQUENCY BLOBS */
+.acoustic-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(140px);
+    z-index: 1;
+    opacity: 0.12;
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+.blob-one {
+    width: 500px; height: 500px;
+    background: var(--psy-deep-purple);
+    top: -10%; right: -5%;
+    animation: subBassPulse 12s ease-in-out infinite alternate;
+}
+.blob-two {
+    width: 600px; height: 600px;
+    background: var(--psy-magenta);
+    bottom: -15%; left: -10%;
+    animation: subBassPulse 18s ease-in-out infinite alternate-reverse;
+}
+@keyframes subBassPulse {
+    0% { transform: scale(1) translate(0px, 0px); filter: blur(140px); }
+    50% { transform: scale(1.2) translate(40px, -30px); filter: blur(170px); opacity: 0.16; }
+    100% { transform: scale(0.9) translate(-20px, 50px); filter: blur(120px); }
+}
+
+/* UNIFIED GLASSMORPHIC NAVBAR */
+.navbar { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 30px 8%; 
+    align-items: center; 
+    position: sticky; top: 0; 
+    background: rgba(4, 4, 6, 0.7); 
+    backdrop-filter: blur(25px); 
+    -webkit-backdrop-filter: blur(25px); 
+    z-index: 100; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
+}
+
+.logo { 
+    font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px; 
+    background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-magenta), var(--psy-deep-purple), var(--psy-liquid-gold)); 
+    background-size: 300% 300%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+    animation: chromaticFluid 8s ease infinite; transition: transform 0.4s; cursor: pointer; display: inline-block; 
+}
+.logo:hover { transform: scale(1.08) skewX(-4deg); letter-spacing: 7px; }
 @keyframes chromaticFluid { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-.navbar { display: flex; justify-content: space-between; padding: 30px 8%; align-items: center; position: sticky; top: 0; background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.03); }
-.nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; transition: color 0.3s; }
-.nav-links a:hover { color: #fff; text-shadow: 0 0 10px var(--psy-neon-cyan); }
-.cta-btn { border: 1px solid #fff; padding: 10px 22px; border-radius: 50px; }
-.hero-section { height: 60vh; display: flex; align-items: center; padding: 0 8%; background: radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.07) 0%, transparent 40%), radial-gradient(circle at 10% 80%, rgba(255, 0, 127, 0.06) 0%, transparent 40%), var(--bg-obsidian); }
-.brand-subtext { color: var(--psy-liquid-gold); letter-spacing: 4px; font-weight: bold; font-size: 0.85rem; margin-bottom: 10px; }
-.hero-content h1 { font-family: 'Syne', sans-serif; font-size: 3.8rem; line-height: 1.1; margin-top: 10px; }
-.hero-description { color: rgba(255, 255, 255, 0.8); max-width: 600px; margin-top: 15px; font-size: 1.1rem; line-height: 1.6; }
-.showroom-section { padding: 80px 8%; background: radial-gradient(circle at 50% 0%, #0d0d14 0%, var(--bg-obsidian) 60%); }
-.section-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; text-align: center; margin-bottom: 50px; }
+
+.nav-links a { color: var(--text-muted); text-decoration: none; margin-left: 35px; font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s; }
+.nav-links a:hover { color: #fff; text-shadow: 0 0 12px var(--psy-neon-cyan); }
+.cta-btn { border: 1px solid rgba(255,255,255,0.4); padding: 10px 24px; border-radius: 50px; background: rgba(255,255,255,0.02); backdrop-filter: blur(5px); }
+.cta-btn:hover { background: linear-gradient(45deg, var(--psy-magenta), var(--psy-deep-purple)); border-color: transparent; box-shadow: 0 0 20px rgba(255,0,127,0.3); transform: translateY(-2px); }
+
+/* HERO SETUP WITH RADIAL TRANSPARENCY SHIFTING */
+.hero-section { height: 65vh; display: flex; align-items: center; padding: 0 8%; position: relative; z-index: 5; }
+
+/* ADVANCEMENT 2: KINETIC ACOUSTIC RESONANCE HEADERS */
+.resonance-header { font-family: 'Syne', sans-serif; font-size: 4.5rem; font-weight: 800; line-height: 1.05; letter-spacing: -2px; transition: transform 0.3s ease; }
+.resonance-header:hover { transform: scale(1.01) rotateX(2deg); }
+.chromatic-text { color: transparent; background: linear-gradient(90deg, var(--psy-magenta), var(--psy-neon-cyan), var(--psy-liquid-gold)); -webkit-background-clip: text; animation: waveDistort 6s linear infinite; background-size: 200% auto; }
+@keyframes waveDistort { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+.brand-subtext { color: var(--psy-liquid-gold); letter-spacing: 6px; font-weight: bold; font-size: 0.85rem; margin-bottom: 12px; }
+.hero-description { color: rgba(255, 255, 255, 0.75); max-width: 650px; margin-top: 20px; font-size: 1.15rem; line-height: 1.7; }
+
+/* ADVANCEMENT 3 & 4: HOLOGRAPHIC HETERODYNE CONSOLE CARDS */
+.showroom-section { padding: 100px 8%; position: relative; z-index: 5; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 60px; }
 .product-grid { display: flex; gap: 40px; }
-.product-card { background: var(--card-dark); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 12px; flex: 1; overflow: hidden; transition: transform 0.4s, border-color 0.4s; }
-.product-card:hover { transform: translateY(-6px); border-color: var(--psy-neon-cyan); }
-.product-image-placeholder { height: 250px; background: #131317; display: flex; align-items: center; justify-content: center; color: #444; font-size: 0.85rem; letter-spacing: 2px; }
-.product-info { padding: 25px; }
-.product-info h3 { font-size: 1.6rem; font-family: 'Syne', sans-serif; }
-.tagline { color: var(--psy-liquid-gold); font-size: 0.9rem; margin: 5px 0 15px 0; font-weight: 600; }
-.specs { color: var(--text-muted); font-size: 0.85rem; }
-.card-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: space-between; align-items: center; }
-.price { font-weight: bold; font-size: 1.1rem; }
-.view-details { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: color 0.3s; }
-.view-details:hover { color: var(--psy-magenta); }
+
+.product-card { 
+    background: var(--card-dark); 
+    border: 1px solid rgba(255, 255, 255, 0.04); 
+    border-radius: 20px; flex: 1; overflow: hidden; 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); 
+}
+.product-card:hover { 
+    transform: translateY(-10px) scale(1.02); 
+    border-color: rgba(0, 240, 255, 0.4); 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,240,255,0.1); 
+}
+
+.product-image-placeholder { height: 260px; background: rgba(10,10,15,0.6); display: flex; align-items: center; justify-content: center; color: #333; font-size: 0.8rem; letter-spacing: 3px; position: relative; overflow: hidden; }
+.laser-sweep { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,0,127,0.15), transparent); transform: skewX(-25deg); animation: dynamicLaser 7s infinite linear; }
+@keyframes dynamicLaser { 0% { left: -100%; } 30% { left: 150%; } 100% { left: 150%; } }
+
+.product-info { padding: 35px; }
+.product-info h3 { font-size: 1.8rem; font-family: 'Syne', sans-serif; font-weight: 800; }
+.tagline { color: var(--psy-liquid-gold); font-size: 0.95rem; margin: 6px 0 15px 0; font-weight: 600; }
+.specs { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
+.card-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.04); display: flex; justify-content: space-between; align-items: center; }
+.price { font-weight: bold; font-size: 1.2rem; }
+.view-details { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.9rem; font-weight: bold; transition: all 0.3s; }
+.view-details:hover { color: var(--psy-magenta); transform: translateX(5px); }
+
+/* HOLOGRAPHIC INTAKE MATRIX FORM */
+.glass-form { background: rgba(13, 13, 18, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 50px; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; }
+.form-group { margin-bottom: 25px; }
+.form-group label { display: block; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+.form-group input, .form-group textarea { width: 100%; background: rgba(5,5,7,0.6); border: 1px solid rgba(255,255,255,0.08); padding: 14px; border-radius: 6px; color: #fff; font-size: 1rem; transition: border-color 0.3s; font-family: 'Inter', sans-serif; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--psy-neon-cyan); box-shadow: 0 0 10px rgba(0,240,255,0.1); }
+.submit-btn { width: 100%; background: #fff; color: #000; font-weight: bold; border: none; padding: 16px; border-radius: 6px; cursor: pointer; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.4s; }
+.submit-btn:hover { background: linear-gradient(45deg, var(--psy-neon-cyan), var(--psy-deep-purple)); color: #fff; box-shadow: 0 0 20px rgba(0,240,255,0.3); }

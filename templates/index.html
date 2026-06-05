@@ -1,22 +1,23 @@
 {% extends 'layout.html' %}
-{% block title %}RAVE | Pristine Sound by Ravi Velnati{% endblock %}
+{% block title %}RAVE | Acoustic Illusion by Ravi Velnati{% endblock %}
 
 {% block content %}
 <header class="hero-section">
     <div class="hero-content">
         <p class="brand-subtext">THE RAVI VELNATI AUDIO LABS</p>
-        <h1>PURE SOUND.<br>UNCOMPROMISED ARTISTRY.</h1>
-        <p class="hero-description">Handcrafted high-end transducers designed to replicate the raw emotion of live performance.</p>
+        <h1 class="resonance-header">ACOUSTIC ILLUSION.<br><span class="chromatic-text">DISSOLVING REALITY.</span></h1>
+        <p class="hero-description">Enter a state of total soundwave immersion. RAVE engineering configurations align phase coordinates to manipulate spatial perception, creating pristine physical soundscapes out of thin air.</p>
     </div>
 </header>
 
 <section id="collection" class="showroom-section">
-    <h2 class="section-title">The Masterpieces</h2>
+    <h2 class="section-title">The Curated Masterpieces</h2>
     <div class="product-grid">
         {% for product in products %}
         <div class="product-card">
             <div class="product-image-placeholder">
-                <span>[ RAVE STUDIO IMAGERY ]</span>
+                <div class="laser-sweep"></div>
+                <span>FREQUENCY CORE ACTIVE</span>
             </div>
             <div class="product-info">
                 <h3>{{ product.name }}</h3>

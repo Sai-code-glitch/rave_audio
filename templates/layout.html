@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}RAVE | Premium Sound Systems{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}RAVE | Acoustic Illusion{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=ACOUSTIC_ILLUSION_v2">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="acoustic-blob blob-one"></div>
+    <div class="acoustic-blob blob-two"></div>
+
     <nav class="navbar">
         <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">RAVE</a></div>
         <div class="nav-links">
             <a href="/#collection">The Collection</a>
-            <a href="/book" class="cta-btn">Book Listening Session</a>
+            <a href="/book" class="cta-btn">Book Audition</a>
         </div>
     </nav>
 
@@ -20,8 +23,8 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer style="padding: 40px 8%; background: #070708; border-top: 1px solid #1c1c1f; text-align: center; color: #555; font-size: 0.85rem; margin-top: 80px;">
-        <p>&copy; 2026 RAVE Audio Laboratories - Handcrafted by Ravi Velnati.</p>
+    <footer style="padding: 60px 8%; background: rgba(5,5,7,0.8); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #444; font-size: 0.85rem; margin-top: 80px; position: relative; z-index: 5;">
+        <p>&copy; 2026 RAVE Audio Laboratories - Handcrafted by Ravi Velnati Systems.</p>
     </footer>
 </body>
 </html>
