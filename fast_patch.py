@@ -102,7 +102,7 @@ def execute_pipeline_patch():
         
         # Append UI elements safely right before the closing main layout tags
         if "fftSpectrumCanvas" not in html_content:
-            html_content = html_content.replace('</body>', f'{NEW_HTML_PAYLOAD}\n</body>')
+            html_content = html_content.replace('Acoustic Reference Console</h2>', f'Acoustic Reference Console</h2>\n{NEW_HTML_PAYLOAD}')
             # Inject corresponding javascript drivers safely
             html_content = html_content.replace('</script>', f'{NEW_JAVASCRIPT_PAYLOAD}\n</script>')
             with open(INDEX_HTML_PATH, "w", encoding="utf-8") as f:
