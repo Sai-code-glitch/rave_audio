@@ -1,8 +1,13 @@
 {% extends 'layout.html' %}
+{% block title %}Audition Requested | RAVE{% endblock %}
 {% block content %}
-<section style="padding: 150px 8%; text-align: center; position: relative; z-index: 5;">
-    <h1 style="font-family: 'Syne', sans-serif; font-size: 3.5rem; color: var(--psy-neon-cyan); margin-bottom: 20px;">Transmission Complete</h1>
-    <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 40px auto; line-height: 1.6;">Your laboratory session request has bypassed security sublayers. An orchestration engineer will contact you shortly.</p>
-    <a href="/" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--psy-magenta); padding-bottom: 4px;">Return To Main Gallery</a>
+<section style="padding: 150px 5%; text-align: center; position: relative; z-index: 5;">
+    <h1 style="font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 8vw, 3.5rem); color: var(--psy-neon-cyan); margin-bottom: 20px;">Transmission Complete</h1>
+    <p style="color: var(--text-muted); max-width: 520px; margin: 0 auto 40px auto; line-height: 1.6;">
+        Thank you, {{ name }}. Your audition request for <strong style="color:#fff">{{ booking.session_date.strftime('%B %d, %Y') }}</strong>
+        {% if booking.speaker %}with the <strong style="color:#fff">{{ booking.speaker.name }}</strong>{% endif %}
+        has been received. An orchestration engineer will email {{ booking.email }} to confirm the time.
+    </p>
+    <a href="{{ url_for('index') }}" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--psy-magenta); padding-bottom: 4px;">Return To Main Gallery</a>
 </section>
 {% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+{% block title %}Signal Lost | RAVE{% endblock %}
+{% block content %}
+<section style="padding: 150px 5%; text-align: center; position: relative; z-index: 5;">
+    <h1 style="font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 8vw, 3.5rem); margin-bottom: 20px;">Signal Lost</h1>
+    <p style="color: var(--text-muted); margin-bottom: 40px;">That page doesn't exist.</p>
+    <a href="{{ url_for('index') }}" style="color: #fff; text-decoration: none; border-bottom: 1px solid var(--psy-magenta); padding-bottom: 4px;">Return To Main Gallery</a>
+</section>
+{% endblock %}

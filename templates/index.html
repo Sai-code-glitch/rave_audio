@@ -97,6 +97,23 @@
                 <span id="spatialVectorDisplay" style="font-size: 0.65rem; color: var(--text-muted); font-family: monospace; margin-top: 5px;">Acoustic Coordinates: X: 0.00, Z: -1.00</span>
             </div>
         </div>
+
+        <div class="hardware-tuning-rack" style="border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 20px;">
+            <div class="tuning-module">
+                <label class="tuning-label" for="overdriveSaturationSlider" style="color: #ff3300;">WAVE-SHAPER OVERDRIVE SATURATION</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="range" id="overdriveSaturationSlider" min="0" max="100" value="0" class="tuning-slider">
+                    <span id="saturationReadout" class="tuning-readout" style="color: #ff3300;">0%</span>
+                </div>
+                <span id="thdMeterDisplay" class="spectrum-caption">THD: 0.002%</span>
+            </div>
+        </div>
+
+        <div class="visualizer-card">
+            <label class="tuning-label" for="fftSpectrumCanvas" style="color: var(--psy-liquid-gold);">FFT FREQUENCY SPECTRUM ANALYZER</label>
+            <canvas id="fftSpectrumCanvas" width="800" height="200" aria-label="Live frequency spectrum of the playing track"></canvas>
+            <span class="spectrum-caption">20 Hz · 200 Hz · 2 kHz · 20 kHz (log scale). Play a reference signal to see it move.</span>
+        </div>
     </div>
 </section>
 
@@ -158,26 +175,101 @@
     const spatialVectorDisplay = document.getElementById('spatialVectorDisplay');
 
     let audioContext = null; let trackSource = null; let analyserNode = null; let pannerNode = null; let gainNode = null;
+    let hfShelfNode = null; let roomShelfNode = null; let waveShaperNode = null; let polarityNode = null; let spectrumAnalyser = null;
     let spatialActive = false; let orbitTheta = 0;
 
+    // Current control settings, applied whenever the audio graph exists.
+    const dspState = { gainDb: 0, hfDb: 0, polarity: 1, roomDb: 0, saturation: 0 };
+    const ROOM_CUT_DB = { free: 0, boundary: -3, corner: -6 };
+
+    function makeDistortionCurve(amount) {
+        const k = amount, nSamples = 44100, curve = new Float32Array(nSamples), deg = Math.PI / 180;
+        for (let i = 0; i < nSamples; ++i) {
+            const x = (i * 2) / nSamples - 1;
+            curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+        }
+        return curve;
+    }
+
+    function applyDspState() {
+        if (!audioContext) return;
+        const t = audioContext.currentTime;
+        gainNode.gain.setTargetAtTime(Math.pow(10, dspState.gainDb / 20), t, 0.02);
+        hfShelfNode.gain.setTargetAtTime(dspState.hfDb, t, 0.02);
+        roomShelfNode.gain.setTargetAtTime(dspState.roomDb, t, 0.02);
+        polarityNode.gain.setTargetAtTime(dspState.polarity, t, 0.01);
+        waveShaperNode.curve = dspState.saturation === 0 ? null : makeDistortionCurve(dspState.saturation * 2);
+    }
+
     function initializeWebAudioAPI() {
-        if (audioContext) return; 
+        if (audioContext) return;
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         trackSource = audioContext.createMediaElementSource(audioPlayer);
         analyserNode = audioContext.createAnalyser();
+        spectrumAnalyser = audioContext.createAnalyser();
         pannerNode = audioContext.createPanner();
         gainNode = audioContext.createGain();
+
+        // Real DSP for the console controls:
+        // HF attenuator = high shelf at 8 kHz, room correction = low shelf at 120 Hz,
+        // phase matrix = polarity inversion, overdrive = wave shaper.
+        hfShelfNode = audioContext.createBiquadFilter();
+        hfShelfNode.type = 'highshelf'; hfShelfNode.frequency.value = 8000;
+        roomShelfNode = audioContext.createBiquadFilter();
+        roomShelfNode.type = 'lowshelf'; roomShelfNode.frequency.value = 120;
+        waveShaperNode = audioContext.createWaveShaper();
+        waveShaperNode.oversample = '4x';
+        polarityNode = audioContext.createGain();
 
         pannerNode.panningModel = 'HRTF';
         pannerNode.distanceModel = 'inverse';
         analyserNode.fftSize = 64;
+        spectrumAnalyser.fftSize = 2048;
+        spectrumAnalyser.smoothingTimeConstant = 0.8;
 
-        trackSource.connect(analyserNode);
+        trackSource.connect(hfShelfNode);
+        hfShelfNode.connect(roomShelfNode);
+        roomShelfNode.connect(waveShaperNode);
+        waveShaperNode.connect(polarityNode);
+        polarityNode.connect(analyserNode);
         analyserNode.connect(pannerNode);
         pannerNode.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        gainNode.connect(spectrumAnalyser);
+        spectrumAnalyser.connect(audioContext.destination);
 
-        runBassKineticShaker(); runSpatialOrbitLoop();
+        applyDspState();
+        runBassKineticShaker(); runSpatialOrbitLoop(); runSpectrumAnalyzer();
+    }
+
+    function runSpectrumAnalyzer() {
+        const canvas = document.getElementById('fftSpectrumCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const bins = new Uint8Array(spectrumAnalyser.frequencyBinCount);
+        const nyquist = audioContext.sampleRate / 2;
+        const minF = 20, maxF = Math.min(20000, nyquist), bars = 96;
+        function draw() {
+            requestAnimationFrame(draw);
+            spectrumAnalyser.getByteFrequencyData(bins);
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#030305'; ctx.fillRect(0, 0, w, h);
+            const barW = w / bars;
+            for (let i = 0; i < bars; i++) {
+                // Log-spaced bands so bass and treble get equal width.
+                const f0 = minF * Math.pow(maxF / minF, i / bars);
+                const f1 = minF * Math.pow(maxF / minF, (i + 1) / bars);
+                const b0 = Math.floor(f0 / nyquist * bins.length);
+                const b1 = Math.max(b0 + 1, Math.floor(f1 / nyquist * bins.length));
+                let peak = 0;
+                for (let b = b0; b < b1 && b < bins.length; b++) peak = Math.max(peak, bins[b]);
+                const barH = (peak / 255) * h * 0.92;
+                const grad = ctx.createLinearGradient(0, h, 0, h - barH);
+                grad.addColorStop(0, '#00f0ff'); grad.addColorStop(1, '#ff007f');
+                ctx.fillStyle = grad;
+                ctx.fillRect(i * barW + 1, h - barH, barW - 2, barH);
+            }
+        }
+        draw();
     }
 
     function runBassKineticShaker() {
@@ -222,13 +314,21 @@
 
     spatialOnBtn.addEventListener('click', () => { initializeWebAudioAPI(); spatialActive = true; spatialOnBtn.classList.add('active-phase'); spatialOffBtn.classList.remove('active-phase'); });
     spatialOffBtn.addEventListener('click', () => { spatialActive = false; spatialOffBtn.classList.add('active-phase'); spatialOnBtn.classList.remove('active-phase'); if(pannerNode) { pannerNode.positionX.setValueAtTime(0, audioContext.currentTime); pannerNode.positionZ.setValueAtTime(-1, audioContext.currentTime); } spatialVectorDisplay.innerText = "Acoustic Coordinates: X: 0.00, Z: -1.00"; });
-    slider.addEventListener('input', (e) => { const val = parseFloat(e.target.value).toFixed(1); display.innerText = val > 0 ? `+${val}` : val; if(gainNode) gainNode.gain.value = Math.pow(10, val / 20); if(blobOne) blobOne.style.transform = `scale(${1 + (val / 24)})`; });
-    hfSlider.addEventListener('input', (e) => { const val = parseFloat(e.target.value).toFixed(1); hfDisplay.innerText = val > 0 ? `+${val} dB` : `${val} dB`; if(maskedText) maskedText.style.filter = `drop-shadow(0 0 ${10 + (val * 8)}px var(--psy-neon-cyan))`; });
-    phase0Btn.addEventListener('click', () => { phase0Btn.classList.add('active-phase'); phase180Btn.classList.remove('active-phase'); document.body.classList.remove('phase-inverted-active'); });
-    phase180Btn.addEventListener('click', () => { phase180Btn.classList.add('active-phase'); phase0Btn.classList.remove('active-phase'); document.body.classList.add('phase-inverted-active'); });
-    roomFreeBtn.addEventListener('click', () => { clearRoomClasses(); roomFreeBtn.classList.add('active-phase'); });
-    roomBoundBtn.addEventListener('click', () => { clearRoomClasses(); roomBoundBtn.classList.add('active-phase'); document.body.classList.add('dsp-boundary-active'); });
-    roomCornerBtn.addEventListener('click', () => { clearRoomClasses(); roomCornerBtn.classList.add('active-phase'); document.body.classList.add('dsp-corner-active'); });
+    slider.addEventListener('input', (e) => { const val = parseFloat(e.target.value); display.innerText = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1); dspState.gainDb = val; applyDspState(); if(blobOne) blobOne.style.transform = `scale(${1 + (val / 24)})`; });
+    hfSlider.addEventListener('input', (e) => { const val = parseFloat(e.target.value); hfDisplay.innerText = val > 0 ? `+${val.toFixed(1)} dB` : `${val.toFixed(1)} dB`; dspState.hfDb = val; applyDspState(); if(maskedText) maskedText.style.filter = `drop-shadow(0 0 ${10 + (val * 8)}px var(--psy-neon-cyan))`; });
+    phase0Btn.addEventListener('click', () => { phase0Btn.classList.add('active-phase'); phase180Btn.classList.remove('active-phase'); document.body.classList.remove('phase-inverted-active'); dspState.polarity = 1; applyDspState(); });
+    phase180Btn.addEventListener('click', () => { phase180Btn.classList.add('active-phase'); phase0Btn.classList.remove('active-phase'); document.body.classList.add('phase-inverted-active'); dspState.polarity = -1; applyDspState(); });
+    roomFreeBtn.addEventListener('click', () => { clearRoomClasses(); roomFreeBtn.classList.add('active-phase'); dspState.roomDb = ROOM_CUT_DB.free; applyDspState(); });
+    roomBoundBtn.addEventListener('click', () => { clearRoomClasses(); roomBoundBtn.classList.add('active-phase'); document.body.classList.add('dsp-boundary-active'); dspState.roomDb = ROOM_CUT_DB.boundary; applyDspState(); });
+    roomCornerBtn.addEventListener('click', () => { clearRoomClasses(); roomCornerBtn.classList.add('active-phase'); document.body.classList.add('dsp-corner-active'); dspState.roomDb = ROOM_CUT_DB.corner; applyDspState(); });
+    const satSlider = document.getElementById('overdriveSaturationSlider');
+    satSlider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        document.getElementById('saturationReadout').innerText = `${val}%`;
+        document.getElementById('thdMeterDisplay').innerText = `THD: ${(0.002 + val * 0.285).toFixed(3)}% (simulated)`;
+        dspState.saturation = val; applyDspState();
+    });
+    [phase0Btn, phase180Btn, roomFreeBtn, roomBoundBtn, roomCornerBtn, spatialOffBtn, spatialOnBtn].forEach(btn => btn.setAttribute('type', 'button'));
     function clearRoomClasses() { roomFreeBtn.classList.remove('active-phase'); roomBoundBtn.classList.remove('active-phase'); roomCornerBtn.classList.remove('active-phase'); document.body.classList.remove('dsp-boundary-active', 'dsp-corner-active'); }
 
     function triggerAudioVisualState(isPlaying) {

@@ -1,26 +1,44 @@
 {% extends 'layout.html' %}
+{% block title %}Book an Audition | RAVE{% endblock %}
 {% block content %}
-<section style="padding: 120px 8%; max-width: 650px; margin: 0 auto; position: relative; z-index: 5;">
-    <h1 style="font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; text-align: center; margin-bottom: 15px;">Private Audition Intake</h1>
-    <p style="text-align: center; color: var(--text-muted); margin-bottom: 50px;">Enter the laboratory coordinates to reserve a calibrated listening session.</p>
-    <form action="/book" method="POST" class="glass-form">
-        <div class="form-group">
-            <label>Full Legal Name</label>
-            <input type="text" name="name" required>
+<section style="padding: 120px 5%; max-width: 650px; margin: 0 auto; position: relative; z-index: 5;">
+    <h1 style="font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 8vw, 3rem); font-weight: 800; text-align: center; margin-bottom: 15px;">Private Audition Intake</h1>
+    <p style="text-align: center; color: var(--text-muted); margin-bottom: 50px;">Reserve a calibrated listening session with a RAVE engineer.</p>
+    {% if errors %}
+    <p role="alert" class="field-error" style="text-align:center; margin-bottom: 20px;">Please fix the highlighted fields.</p>
+    {% endif %}
+    <form action="{{ url_for('book_session') }}" method="POST" class="glass-form" novalidate>
+        <div class="form-group {% if errors.name %}has-error{% endif %}">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required maxlength="120" autocomplete="name" value="{{ form.get('name', '') }}">
+            {% if errors.name %}<span class="field-error">{{ errors.name }}</span>{% endif %}
         </div>
-        <div class="form-group">
-            <label>Secure Email Address</label>
-            <input type="email" name="email" required>
+        <div class="form-group {% if errors.email %}has-error{% endif %}">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required maxlength="200" autocomplete="email" value="{{ form.get('email', '') }}">
+            {% if errors.email %}<span class="field-error">{{ errors.email }}</span>{% endif %}
         </div>
-        <div class="form-group">
-            <label>Target Session Date</label>
-            <input type="date" name="date" required>
+        <div class="form-group {% if errors.speaker_id %}has-error{% endif %}">
+            <label for="speaker_id">System of Interest</label>
+            <select id="speaker_id" name="speaker_id">
+                <option value="">Not sure yet</option>
+                {% for s in speakers %}
+                <option value="{{ s.id }}" {% if form.get('speaker_id', '')|string == s.id|string %}selected{% endif %}>{{ s.name }} ({{ s.price }})</option>
+                {% endfor %}
+            </select>
+            {% if errors.speaker_id %}<span class="field-error">{{ errors.speaker_id }}</span>{% endif %}
         </div>
-        <div class="form-group">
-            <label>Acoustic System Requirements / Notes</label>
-            <textarea name="notes" rows="4"></textarea>
+        <div class="form-group {% if errors.date %}has-error{% endif %}">
+            <label for="date">Session Date</label>
+            <input type="date" id="date" name="date" required min="{{ today }}" value="{{ form.get('date', '') }}">
+            {% if errors.date %}<span class="field-error">{{ errors.date }}</span>{% endif %}
         </div>
-        <button type="submit" class="submit-btn">Submit Session Verification</button>
+        <div class="form-group {% if errors.notes %}has-error{% endif %}">
+            <label for="notes">Room, Listening Goals or Notes</label>
+            <textarea id="notes" name="notes" rows="4" maxlength="2000">{{ form.get('notes', '') }}</textarea>
+            {% if errors.notes %}<span class="field-error">{{ errors.notes }}</span>{% endif %}
+        </div>
+        <button type="submit" class="submit-btn">Request Audition</button>
     </form>
 </section>
 {% endblock %}
