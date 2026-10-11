@@ -1,10 +1,15 @@
 {% extends 'layout.html' %}
+{% block title %}{{ speaker.name }} | RAVE{% endblock %}
 {% block content %}
-<section style="padding: 120px 8% 60px 8%; display: flex; gap: 80px; align-items: center; position: relative; z-index: 5;">
-    <div style="flex: 1; height: 500px; background: rgba(20,20,25,0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: #444; border-radius: 16px;">
-        [ System Architecture Field Capture ]
+<section class="product-detail">
+    <div class="product-media">
+        <video autoplay loop muted playsinline preload="metadata" aria-hidden="true">
+            <source src="{{ url_for('static', filename='videos/oscilloscope.mp4') }}" type="video/mp4">
+        </video>
+        <div class="laser-sweep"></div>
+        <div class="hardware-stamp">SYSTEM ARCHITECTURE FIELD CAPTURE</div>
     </div>
-    <div style="flex: 1;">
+    <div class="product-copy">
         <p style="color: var(--psy-liquid-gold); font-weight: bold; letter-spacing: 3px; font-size: 0.85rem;">SPECIFICATION MATRIX</p>
         <h1 style="font-family: 'Syne', sans-serif; font-size: 3.5rem; margin: 10px 0; font-weight: 800;">{{ speaker.name }}</h1>
         <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 30px;">{{ speaker.tagline }}</p>
@@ -14,7 +19,7 @@
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 15px 0; color: var(--text-muted);">Cabinet Finish</td><td style="padding: 15px 0; text-align: right;">{{ speaker.cabinet_finish }}</td></tr>
             <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);"><td style="padding: 15px 0; color: var(--text-muted);">System Valuation</td><td style="padding: 15px 0; text-align: right; font-weight: bold; color: var(--psy-neon-cyan);">{{ speaker.price }}</td></tr>
         </table>
-        <a href="/book" class="cta-btn" style="padding: 16px 40px; display: inline-block;">Acquire System Architecture</a>
+        <a href="{{ url_for('book_session', speaker=speaker.id) }}" class="cta-btn" style="padding: 16px 40px; display: inline-block; color: #fff; text-decoration: none;">Book a Private Audition</a>
     </div>
 </section>
 {% endblock %}

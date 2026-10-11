@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block title %}Audition Bookings | RAVE{% endblock %}
+{% block content %}
+<section class="showroom-section">
+    <h1 class="section-title" style="margin-bottom: 20px;">Audition Bookings</h1>
+    <p style="text-align:center; color: var(--text-muted); margin-bottom: 40px;">{{ bookings|length }} request{{ '' if bookings|length == 1 else 's' }}, soonest session first.</p>
+    {% if bookings %}
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead><tr><th>Session date</th><th>Name</th><th>Email</th><th>System</th><th>Notes</th><th>Received</th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+            <tr>
+                <td>{{ b.session_date.strftime('%b %d, %Y') }}</td>
+                <td>{{ b.name }}</td>
+                <td>{{ b.email }}</td>
+                <td>{{ b.speaker.name if b.speaker else 'Not sure yet' }}</td>
+                <td style="max-width: 320px; white-space: pre-wrap;">{{ b.notes or '' }}</td>
+                <td style="color: var(--text-muted);">{{ b.created_at.strftime('%b %d, %H:%M') if b.created_at else '' }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="text-align:center; color: var(--text-muted);">No bookings yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

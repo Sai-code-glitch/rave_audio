@@ -112,3 +112,67 @@ body.dsp-corner-active .hero-bg-video { filter: saturate(180%) contrast(135%) bl
 .price { font-weight: bold; font-size: 1.2rem; }
 .schematics-btn { color: var(--psy-neon-cyan); text-decoration: none; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; font-family: 'Syne', sans-serif; transition: all 0.3s; position: relative; }
 .schematics-btn:hover { color: #fff; text-shadow: 0 0 10px var(--psy-neon-cyan); }
+
+/* SPECTRUM ANALYZER */
+.visualizer-card { width: 100%; background: rgba(10, 10, 12, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 8px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
+#fftSpectrumCanvas { width: 100%; height: auto; aspect-ratio: 4 / 1; background: #030305; border-radius: 4px; border: 1px solid rgba(255,255,255,0.02); }
+.spectrum-caption { font-size: 0.65rem; color: var(--text-muted); font-family: monospace; letter-spacing: 1px; }
+
+/* FORMS, ERRORS, TABLES */
+.glass-form { display: grid; gap: 22px; background: rgba(10, 10, 14, 0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 32px; backdrop-filter: blur(20px); }
+.form-group { display: grid; gap: 8px; }
+.form-group label { font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
+.form-group input, .form-group textarea, .form-group select { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; padding: 14px; font: inherit; color-scheme: dark; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--psy-neon-cyan); box-shadow: 0 0 0 3px rgba(0,240,255,0.12); }
+.form-group select option { background: #0b0b10; }
+.field-error { color: var(--psy-magenta); font-size: 0.8rem; }
+.form-group.has-error input, .form-group.has-error textarea, .form-group.has-error select { border-color: var(--psy-magenta); }
+.submit-btn { background: linear-gradient(90deg, var(--psy-neon-cyan), var(--psy-magenta)); color: #050507; border: 0; border-radius: 50px; padding: 16px 28px; font-weight: 800; letter-spacing: 1px; cursor: pointer; font-size: 0.95rem; }
+.submit-btn:hover { filter: brightness(1.1); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--psy-neon-cyan); outline-offset: 3px; }
+.admin-table-wrap { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.admin-table th, .admin-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); vertical-align: top; }
+.admin-table th { color: var(--text-muted); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
+
+/* PRODUCT DETAIL */
+.product-detail { padding: 120px 8% 60px 8%; display: flex; gap: 80px; align-items: center; position: relative; z-index: 5; }
+.product-media { flex: 1; height: 500px; background: rgba(20,20,25,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; position: relative; }
+.product-media video { width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+.product-media .hardware-stamp { z-index: 2; }
+.product-copy { flex: 1; min-width: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* PHONES AND TABLETS */
+@media (max-width: 900px) {
+    .navbar { padding: 18px 5%; }
+    .logo { font-size: 1.8rem; }
+    .nav-links a { margin-left: 16px; font-size: 0.75rem; }
+    .hero-section { height: auto; min-height: 70vh; padding: 60px 5%; }
+    .resonance-header { font-size: clamp(2.2rem, 9vw, 4.5rem); letter-spacing: -1px; }
+    .wave-container { width: 60%; right: 5%; opacity: 0.15; }
+    .showroom-section { padding: 60px 5%; }
+    .section-title { font-size: clamp(1.8rem, 7vw, 2.8rem); margin-bottom: 36px; }
+    .audio-console-container { padding: 20px; }
+    .audio-console-container > div[style*="display: flex"] { flex-direction: column; gap: 24px !important; }
+    .console-now-playing { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.04); padding: 0 0 20px 0; }
+    .console-playlist { padding-left: 0; }
+    .hardware-tuning-rack { flex-direction: column; gap: 20px; }
+    .tuning-slider { width: 100%; }
+    .product-grid { flex-direction: column; gap: 24px; }
+    .product-info { padding: 24px; }
+    .card-footer { flex-wrap: wrap; gap: 12px; }
+    .product-detail { flex-direction: column; gap: 32px; padding: 60px 5% 40px; }
+    .product-media { width: 100%; height: 280px; flex: none; }
+    .product-copy h1 { font-size: clamp(2rem, 9vw, 3.5rem) !important; }
+    .glass-form { padding: 22px; }
+    .acoustic-blob { width: 300px; height: 300px; }
+}
+@media (max-width: 480px) {
+    .nav-links a:not(.cta-btn) { display: none; }
+    .cta-btn { padding: 8px 16px; }
+    .custom-audio-controls { flex-wrap: wrap; }
+}
